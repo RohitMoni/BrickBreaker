@@ -16,6 +16,45 @@
 #Unity3D Generated File On Crash Reports
 sysinfo.txt
 
+#Unity3D files
+Assets/Textures
+
+$PROJDIR
+
+obj
+Temp
+.suo
+.user
+.pidb
+.userprefs
+
+$PROJDIR/Library
+
+cache
+metadata
+previews
+ScriptAssemblies
+assetDatabase3
+AssetImportState
+assetservercachev3
+AssetServerCacheV3
+AssetVersioning.db
+AudioManager.asset
+BuildPlayer.prefs
+BuildSettings.asset
+DynamicsManager.asset
+EditorSettings.asset
+EditorUserBuildSettings.asset
+expandedItems
+FailedAssetImports.txt
+guidmapper
+InspectorExpandedItems.asset
+MonoManager.asset
+NetworkManager.asset
+ScriptMapper
+unity default resources
+unity editor resources
+
 # =========================
 # Operating System Files
 # =========================
@@ -62,3 +101,5 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+Sample Screen.png
+*.psd
