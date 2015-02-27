@@ -12,4 +12,13 @@ public class BrickScript : MonoBehaviour {
 	void Update () {
 	
 	}
+
+    public void OnCollisionEnter2D(Collision2D collision2D)
+    {
+        if (collision2D.gameObject.tag == "Ball")
+        {
+            Debug.Log("Brick Destroyed!");
+            Destroy(gameObject);
+        }
+    }
 }

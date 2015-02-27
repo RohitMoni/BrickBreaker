@@ -22,4 +22,6 @@ public class PaddleScript : MonoBehaviour
             transform.Rotate(Vector3.back, Speed);
 	    }
 	}
+
+    
 }
