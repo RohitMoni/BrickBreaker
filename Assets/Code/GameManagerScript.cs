@@ -6,10 +6,12 @@ namespace Assets.Code
     public class GameManagerScript : MonoBehaviour
     {
         private int _currentState; // -1 = loss, 0 = playing, 1 = won
+        public bool IsPaused;
 
         // Use this for initialization
-        void Start () {
-	
+        void Start ()
+        {
+            IsPaused = false;
         }
 	
         // Update is called once per frame

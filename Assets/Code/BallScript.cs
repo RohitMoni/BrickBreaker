@@ -28,20 +28,24 @@ namespace Assets.Code
 	
         // Update is called once per frame
         void Update () {
-            if (Input.GetKey(KeyCode.Space) && !_started)
+            if (!_gameAnchor.GetComponent<GameManagerScript>().IsPaused)
             {
-                // Parent the ball to the game anchor so that it stops using the paddles movement
-                transform.parent = _gameAnchor;
 
-                // Apply an acceleration to its velocity, rotated by the paddle's rotation
-                var rotation = _paddleAnchor.rotation;
-                var appliedVelocity = rotation * Vector3.up;
+                if (Input.GetKey(KeyCode.Space) && !_started)
+                {
+                    // Parent the ball to the game anchor so that it stops using the paddles movement
+                    transform.parent = _gameAnchor;
 
-                _velocity = appliedVelocity * _speed;
-                _started = true;
+                    // Apply an acceleration to its velocity, rotated by the paddle's rotation
+                    var rotation = _paddleAnchor.rotation;
+                    var appliedVelocity = rotation*Vector3.up;
+
+                    _velocity = appliedVelocity*_speed;
+                    _started = true;
+                }
+
+                transform.position += _velocity;
             }
-
-            transform.position += _velocity;
         }
 
         public void OnCollisionEnter2D(Collision2D collision2D)
