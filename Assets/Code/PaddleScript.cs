@@ -43,6 +43,10 @@ namespace Assets.Code
                 {
                     if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)
                     {
+                        // Ignore touches that hit the pause button
+                        if (touch.position.y > Screen.height/9.0f)
+                            break;
+
                         var worldPos = _camera.ScreenToWorldPoint(touch.position);
 
                         var angleRadians = Math.Atan2(worldPos.y, worldPos.x);
@@ -93,6 +97,9 @@ namespace Assets.Code
             }
         }
 
-    
+        public void Reset()
+        {
+            
+        }
     }
 }

@@ -8,10 +8,17 @@ namespace Assets.Code
         private int _currentState; // -1 = loss, 0 = playing, 1 = won
         public bool IsPaused;
 
+        /* References */
+        private GameObject _startMenu;
+        private GameObject _paddleCentre;
+
+
         // Use this for initialization
         void Start ()
         {
             IsPaused = false;
+            _startMenu = GameObject.FindGameObjectWithTag("StartMenu");
+            _paddleCentre = GameObject.FindGameObjectWithTag("PaddleAnchor");
         }
 	
         // Update is called once per frame
@@ -26,6 +33,20 @@ namespace Assets.Code
                     Debug.Log("Player Won");
                     break;
             }
+        }
+
+        public void StartGame()
+        {
+        }
+
+        public void QuitGame()
+        {
+            
+        }
+
+        private void ResetGame()
+        {
+            
         }
 
         public void SetWinLossState(bool state)

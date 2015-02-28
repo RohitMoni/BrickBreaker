@@ -11,7 +11,6 @@ namespace Assets.Code
         /* References */
         private Transform _gameAnchor, _paddleAnchor;
 
-
         // Use this for initialization
         void Start ()
         {
