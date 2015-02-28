@@ -7,9 +7,9 @@ namespace Assets.Code
 
         public GameObject BrickRingPrefab;
 
-        private const float _initialScale = 0.15f;
-        private const float _finalScale = 1.00f;
-        private const float _scaleUpSpeed = 0.01f;
+        private const float InitialScale = 0.15f;
+        private const float FinalScale = 1.00f;
+        private const float ScaleUpSpeed = 0.01f;
 
         // Use this for initialization
         void Start () {
@@ -27,7 +27,7 @@ namespace Assets.Code
             gO.transform.parent = transform;
 
             gO.transform.position.Set(0, 0, 0);
-            gO.transform.localScale.Set(_initialScale, _initialScale, _initialScale);
+            gO.transform.localScale.Set(InitialScale, InitialScale, InitialScale);
         }
     }
 }

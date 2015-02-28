@@ -20,6 +20,7 @@ namespace Assets.Code
             {
                 case -1:    // Switch to lost screen
                     Debug.Log("Player Lost");
+                    Application.Quit();
                     break;
                 case 1:     // Switch to won screen
                     Debug.Log("Player Won");
@@ -27,7 +28,7 @@ namespace Assets.Code
             }
         }
 
-        public void setWinLossState(bool state)
+        public void SetWinLossState(bool state)
         {
             _currentState = (state) ? 1 : -1;
         }

@@ -34,7 +34,7 @@ namespace Assets.Code
                 }
 
                 if (lost)
-                    _gameAnchor.GetComponent<GameManagerScript>().setWinLossState(true);
+                    _gameAnchor.GetComponent<GameManagerScript>().SetWinLossState(true);
             }
         }
     }

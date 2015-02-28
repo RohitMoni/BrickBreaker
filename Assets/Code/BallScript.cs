@@ -5,7 +5,6 @@ namespace Assets.Code
     public class BallScript : MonoBehaviour
     {
         /* Properties */
-        private bool _started;
         private float _speed;
         private Vector3 _velocity;
 
@@ -16,7 +15,6 @@ namespace Assets.Code
         // Use this for initialization
         void Start ()
         {
-            _started = false;
             _speed = 0.03f;
 
 
@@ -30,23 +28,16 @@ namespace Assets.Code
         void Update () {
             if (!_gameAnchor.GetComponent<GameManagerScript>().IsPaused)
             {
-
-                if (Input.GetKey(KeyCode.Space) && !_started)
-                {
-                    // Parent the ball to the game anchor so that it stops using the paddles movement
-                    transform.parent = _gameAnchor;
-
-                    // Apply an acceleration to its velocity, rotated by the paddle's rotation
-                    var rotation = _paddleAnchor.rotation;
-                    var appliedVelocity = rotation*Vector3.up;
-
-                    _velocity = appliedVelocity*_speed;
-                    _started = true;
-                }
-
                 transform.position += _velocity;
             }
         }
+
+        public void ApplyVelocity(Vector3 newVelocity)
+        {
+            _velocity = newVelocity * _speed;
+        }
+
+        
 
         public void OnCollisionEnter2D(Collision2D collision2D)
         {
@@ -67,7 +58,7 @@ namespace Assets.Code
                 }
 
                 if (lost)
-                    _gameAnchor.GetComponent<GameManagerScript>().setWinLossState(false);
+                    _gameAnchor.GetComponent<GameManagerScript>().SetWinLossState(false);
             }
             else
             {
