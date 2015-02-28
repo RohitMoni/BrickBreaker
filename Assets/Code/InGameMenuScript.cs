@@ -8,14 +8,15 @@ public class InGameMenuScript : MonoBehaviour
     private bool _isEnabled;
 
     /* References */
-    private GameObject _inGameMenu;
+    public GameObject _pauseMenu;
+    public GameObject _inGameMenu;
+
     private GameObject _gameAnchor;
 
 	// Use this for initialization
 	void Start ()
 	{
 	    _isEnabled = false;
-	    _inGameMenu = transform.GetChild(0).gameObject;
 	    _gameAnchor = GameObject.FindGameObjectWithTag("GameAnchor");
 	}
 	
@@ -23,12 +24,12 @@ public class InGameMenuScript : MonoBehaviour
 	void Update ()
 	{
 	    if (Input.GetKeyUp(KeyCode.Escape))
-            ToggleInGameMenu();
+            TogglePauseMenu();
 	}
 
-    public void ToggleInGameMenu()
+    public void TogglePauseMenu()
     {
-        _inGameMenu.SetActive(!_isEnabled);
+        _pauseMenu.SetActive(!_isEnabled);
         _isEnabled = !_isEnabled;
         _gameAnchor.GetComponent<GameManagerScript>().IsPaused = _isEnabled;
     }
