@@ -100,7 +100,7 @@ public class PaddleManagerScript : MonoBehaviour
                 child.parent = _gameAnchor.transform;
 
                 // Apply an acceleration to its velocity, rotated by the paddle's rotation
-                var rotation = transform.rotation;
+                var rotation = _paddleAnchor.transform.rotation;
                 var appliedVelocity = rotation * Vector3.up;
 
                 child.GetComponent<BallScript>().ApplyVelocity(appliedVelocity);
@@ -110,7 +110,11 @@ public class PaddleManagerScript : MonoBehaviour
 
     public void Reset()
     {
-        transform.rotation = Quaternion.identity;
+        _paddleAnchor.transform.rotation = Quaternion.identity;
+    }
+
+    public void CreateNewBall()
+    {
         var ball = Instantiate(BallPrefab) as GameObject;
         ball.transform.position = _paddleAnchor.transform.GetChild(0).transform.position;
         ball.transform.position += new Vector3(0, 0.25f, 0);

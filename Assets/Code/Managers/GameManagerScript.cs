@@ -17,6 +17,7 @@ namespace Assets.Code
         void Start ()
         {
             IsPaused = true;
+            _currentState = 0;
             _menuManager = GetComponent<MenuManagerScript>();
             _paddleManager = GetComponent<PaddleManagerScript>();
             _brickManager = GetComponent<BrickManagerScript>();
@@ -43,10 +44,13 @@ namespace Assets.Code
         public void StartGame()
         {
             _paddleManager.Reset();
+            _paddleManager.CreateNewBall();
             _brickManager.Reset();
             IsPaused = false;
             // Move from start menu to ingame
             _menuManager.StartMenuToGame();
+
+            _currentState = 0;
         }
 
         public void StopGame()
@@ -56,6 +60,8 @@ namespace Assets.Code
             IsPaused = true;
             // Disable the ingame menu and enable the start menu
             _menuManager.GameToStartMenu();
+
+            _currentState = 0;
         }
 
         public void TogglePause()
@@ -76,6 +82,7 @@ namespace Assets.Code
 
         public void SetWinLossState(bool state)
         {
+            Debug.Log("Game " + (state? "Won" : "Lost"));
             _currentState = (state) ? 1 : -1;
         }
     }
