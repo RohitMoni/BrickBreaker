@@ -5,15 +5,12 @@ using System.Collections;
 public class MenuManagerScript : MonoBehaviour {
 
     /* References */
-    private GameManagerScript _gameManager;
-
     private GameObject _startMenu;
     private GameObject _inGameMenu;
 
 	// Use this for initialization
 	void Start ()
 	{
-	    _gameManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<GameManagerScript>();
 	    _startMenu = GameObject.FindGameObjectWithTag("StartMenu");
 	    _inGameMenu = GameObject.FindGameObjectWithTag("InGameMenu");
 	    _inGameMenu.SetActive(false);
