@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Assets.Code;
 using UnityEngine;
 using System.Collections;
@@ -111,6 +112,12 @@ public class PaddleManagerScript : MonoBehaviour
     public void Reset()
     {
         _paddleAnchor.transform.rotation = Quaternion.identity;
+
+        // Remove all balls
+        foreach (Transform child in _gameAnchor.transform.Cast<Transform>().Where(child => child.tag == "Ball"))
+        {
+            Destroy(child.gameObject);
+        }
     }
 
     public void CreateNewBall()
