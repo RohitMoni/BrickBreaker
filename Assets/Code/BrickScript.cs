@@ -4,12 +4,14 @@ namespace Assets.Code
 {
     public class BrickScript : MonoBehaviour
     {
+        /* References */
 
-        private Transform _gameAnchor;
+        // Managers
+        private GameManagerScript _gameManager;
 
         // Use this for initialization
         void Start () {
-            _gameAnchor = GameObject.FindGameObjectWithTag("GameAnchor").transform;
+            _gameManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<GameManagerScript>();
         }
 	
         // Update is called once per frame
@@ -34,7 +36,7 @@ namespace Assets.Code
                 }
 
                 if (lost)
-                    _gameAnchor.GetComponent<GameManagerScript>().SetWinLossState(true);
+                    _gameManager.SetWinLossState(true);
             }
         }
     }

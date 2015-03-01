@@ -29,5 +29,10 @@ namespace Assets.Code
             gO.transform.position.Set(0, 0, 0);
             gO.transform.localScale.Set(InitialScale, InitialScale, InitialScale);
         }
+
+        public void Reset()
+        {
+            
+        }
     }
 }

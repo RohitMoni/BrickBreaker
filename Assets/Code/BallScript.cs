@@ -9,23 +9,25 @@ namespace Assets.Code
         private Vector3 _velocity;
 
         /* References */
-        private Transform _gameAnchor, _paddleAnchor;
+        private GameManagerScript _gameManager;
+
+        // Anchors
+        private GameObject _paddleAnchor;
 
         // Use this for initialization
         void Start ()
         {
             _speed = 0.03f;
+            
+            _gameManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<GameManagerScript>();
+            _paddleAnchor = GameObject.FindGameObjectWithTag("PaddleAnchor");
 
-
-            _gameAnchor = GameObject.FindGameObjectWithTag("GameAnchor").transform;
-            _paddleAnchor = GameObject.FindGameObjectWithTag("PaddleAnchor").transform;
-
-            transform.parent = _paddleAnchor;
+            transform.parent = _paddleAnchor.transform;
         }
 	
         // Update is called once per frame
         void Update () {
-            if (!_gameAnchor.GetComponent<GameManagerScript>().IsPaused)
+            if (!_gameManager.IsPaused)
             {
                 transform.position += _velocity;
             }
@@ -35,8 +37,6 @@ namespace Assets.Code
         {
             _velocity = newVelocity * _speed;
         }
-
-        
 
         public void OnCollisionEnter2D(Collision2D collision2D)
         {
@@ -57,7 +57,7 @@ namespace Assets.Code
                 }
 
                 if (lost)
-                    _gameAnchor.GetComponent<GameManagerScript>().SetWinLossState(false);
+                    _gameManager.SetWinLossState(false);
             }
             else
             {
