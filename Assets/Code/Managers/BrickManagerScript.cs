@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 
 namespace Assets.Code
@@ -86,7 +87,11 @@ namespace Assets.Code
 
                 if (ring.Bricks.Count == 0)
                 {
-                    
+                    Destroy(ring.Anchor);
+                    _brickRings.RemoveAt(i);
+
+                    if (i == 0)
+                        _brickPause = false;
                 }
             }
         }
