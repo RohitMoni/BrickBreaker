@@ -28,14 +28,14 @@ namespace Assets.Code
 
                 // Check for win condition
                 var remainingBricks = GameObject.FindGameObjectsWithTag("Brick");
-                var lost = true;
+                var won = true;
                 foreach (var brick in remainingBricks)
                 {
                     if (brick != gameObject)
-                        lost = false;
+                        won = false;
                 }
 
-                if (lost)
+                if (won)
                     _gameManager.SetWinLossState(true);
             }
         }

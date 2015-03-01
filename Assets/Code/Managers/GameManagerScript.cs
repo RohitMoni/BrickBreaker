@@ -45,7 +45,7 @@ namespace Assets.Code
         {
             _paddleManager.Reset();
             _paddleManager.CreateNewBall();
-            _brickManager.Reset();
+            _brickManager.StartUp();
             IsPaused = false;
             // Move from start menu to ingame
             _menuManager.StartMenuToGame();
@@ -56,7 +56,7 @@ namespace Assets.Code
         public void StopGame()
         {
             _paddleManager.Reset();
-            _brickManager.Reset();
+            _brickManager.CleanUp();
             IsPaused = true;
             // Disable the ingame menu and enable the start menu
             _menuManager.GameToStartMenu();

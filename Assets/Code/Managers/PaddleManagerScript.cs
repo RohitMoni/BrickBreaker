@@ -27,7 +27,7 @@ public class PaddleManagerScript : MonoBehaviour
         _gameAnchor = GameObject.FindGameObjectWithTag("GameAnchor");
         _paddleAnchor = GameObject.FindGameObjectWithTag("PaddleAnchor");
         _camera = Camera.main;
-        _speed = 0.1f;
+        _speed = 1.0f;
     }
 
     // Update is called once per frame
@@ -105,6 +105,7 @@ public class PaddleManagerScript : MonoBehaviour
                 var appliedVelocity = rotation * Vector3.up;
 
                 child.GetComponent<BallScript>().ApplyVelocity(appliedVelocity);
+                child.GetComponent<CircleCollider2D>().enabled = true;
             }
         }
     }
@@ -125,5 +126,6 @@ public class PaddleManagerScript : MonoBehaviour
         var ball = Instantiate(BallPrefab) as GameObject;
         ball.transform.position = _paddleAnchor.transform.GetChild(0).transform.position;
         ball.transform.position += new Vector3(0, 0.25f, 0);
+        ball.GetComponent<CircleCollider2D>().enabled = false;
     }
 }
