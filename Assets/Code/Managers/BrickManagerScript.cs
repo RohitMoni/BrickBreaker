@@ -61,8 +61,8 @@ namespace Assets.Code
 
                     Bricks.Add(newBrick);
                     newBrick.transform.parent = Anchor.transform;
-                    newBrick.transform.eulerAngles = new Vector3(0, 0, 360.0f / numberOfBricks * i);
-                    newBrick.transform.position = newBrick.transform.rotation * new Vector3(0, -1.7f, 0);
+                    newBrick.transform.localEulerAngles = new Vector3(0, 0, 360.0f / numberOfBricks * i);
+                    newBrick.transform.localPosition = (newBrick.transform.rotation * new Vector3(0, -1.7f, 0));
                 }
             }
         }

@@ -56,7 +56,7 @@ public class PaddleManagerScript : MonoBehaviour
                 if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)
                 {
                     // Ignore touches that hit the pause button
-                    if (touch.position.y > Screen.height / 9.0f)
+                    if (touch.position.y > Screen.height / 10 * 9)
                         break;
 
                     var worldPos = _camera.ScreenToWorldPoint(touch.position);
