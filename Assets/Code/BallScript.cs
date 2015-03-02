@@ -17,7 +17,7 @@ namespace Assets.Code
         // Use this for initialization
         void Start ()
         {
-            Speed = 0.03f;
+            //Speed = 0.03f;
             
             _gameManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<GameManagerScript>();
             _paddleAnchor = GameObject.FindGameObjectWithTag("PaddleAnchor");
