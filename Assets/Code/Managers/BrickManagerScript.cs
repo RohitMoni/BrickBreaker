@@ -127,6 +127,9 @@ namespace Assets.Code
 
         public void StartUp()
         {
+            // Reset the spawn timer
+            _spawnTimer = 0;
+
             // Create new ones
             CreateNewBrickRing();
         }
