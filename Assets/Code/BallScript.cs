@@ -6,7 +6,7 @@ namespace Assets.Code
     {
         /* Properties */
         private float _speed;
-        private Vector3 _velocity;
+        public Vector3 _velocity;
 
         /* References */
         private GameManagerScript _gameManager;
