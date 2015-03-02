@@ -9,6 +9,7 @@ namespace Assets.Code
         public int RingIndex;
 
         /* References */
+        private GameObject _brickDestroyEffect;
 
         // Managers
         private GameManagerScript _gameManager;
@@ -16,6 +17,7 @@ namespace Assets.Code
         // Use this for initialization
         void Start () {
             _gameManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<GameManagerScript>();
+            _brickDestroyEffect = GameObject.FindGameObjectWithTag("ParticleBrickDestroy");
             //GetComponent<BoxCollider2D>().enabled = false;
         }
 
@@ -34,6 +36,21 @@ namespace Assets.Code
             if (collision2D.gameObject.tag == "Ball")
             {
                 Debug.Log("Brick Destroyed!");
+
+                // Move and rotate particle effect
+                var position = transform.position;
+                position.z = -4;
+                _brickDestroyEffect.transform.position = position;
+
+                //var rotationVel = collision2D.contacts[0].normal;
+                //var angle = Mathf.Atan2(rotationVel.y, rotationVel.x)*Mathf.Rad2Deg;
+                //var rotation = Quaternion.Euler(0, 0, angle);
+                //_brickDestroyEffect.transform.rotation = rotation;
+
+                // Play particle effect
+                _brickDestroyEffect.GetComponent<ParticleSystem>().Play();
+
+                // Destroy brick
                 Destroy(gameObject);
 
                 // Check for win condition

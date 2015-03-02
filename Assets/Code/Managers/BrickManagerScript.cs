@@ -41,6 +41,7 @@ namespace Assets.Code
         // Update is called once per frame
         void Update ()
         {
+#if UNITY_EDITOR
             if (Input.GetKeyUp(KeyCode.Tab))
             {
                 var ring = _brickRings[0];
@@ -48,6 +49,7 @@ namespace Assets.Code
                 foreach (Transform brick in ring.Anchor.transform)
                     Destroy(brick.gameObject);
             }
+#endif
 
             CheckRings();
 
