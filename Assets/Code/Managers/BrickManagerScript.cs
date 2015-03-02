@@ -21,7 +21,7 @@ namespace Assets.Code
         /* Consts */
         private const float InitialScale = 0.20f;
         private const float FinalScale = 0.80f;
-        private const float ScaleUpSpeed = 0.0002f;
+        private const float ScaleUpSpeed = 0.002f;
         private const float MaxScaleUp = 1.5f;
 
         private static readonly Vector3 InitialScaleVec = new Vector3(InitialScale, InitialScale, InitialScale);
@@ -106,6 +106,9 @@ namespace Assets.Code
             }
 
             _brickRings.Clear();
+
+            // reset brick pause
+            _brickPause = false;
         }
 
         public void StartUp()
