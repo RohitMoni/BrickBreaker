@@ -21,14 +21,14 @@ namespace Assets.Code
         /* Consts */
         private const float InitialScale = 0.20f;
         private const float FinalScale = 0.80f;
-        private const float ScaleUpSpeed = 0.002f;
+        private const float ScaleUpSpeed = 0.0008f;
         private const float MaxScaleUp = 1.5f;
 
         private static readonly Vector3 InitialScaleVec = new Vector3(InitialScale, InitialScale, InitialScale);
         private static readonly Vector3 FinalScaleVec = new Vector3(FinalScale, FinalScale, FinalScale);
 
         private const float TimeToSetUp = 0.75f;
-        private const float TimeToSpawn = 20.00f;
+        private const float TimeToSpawn = 5.00f;
 
         // Use this for initialization
         void Start ()
@@ -41,6 +41,16 @@ namespace Assets.Code
         // Update is called once per frame
         void Update ()
         {
+            if (Input.GetKeyUp(KeyCode.Tab))
+            {
+                var ring = _brickRings[0];
+
+                foreach (Transform brick in ring.Anchor.transform)
+                    Destroy(brick.gameObject);
+            }
+
+            CheckRings();
+
             if (_gameManager.IsPaused || _brickPause)
                 return;
 
@@ -85,7 +95,9 @@ namespace Assets.Code
             {
                 var ring = _brickRings[i];
 
-                if (ring.Bricks.Count == 0)
+                var count = ring.Anchor.transform.childCount;
+
+                if (count == 0)
                 {
                     Destroy(ring.Anchor);
                     _brickRings.RemoveAt(i);
@@ -131,15 +143,11 @@ namespace Assets.Code
         public class BrickRing
         {
             public GameObject Anchor;
-            public List<GameObject> Bricks;
-
             public float Time;
 
             public BrickRing(int numberOfBricks, BrickManagerScript brickManager)
             {
-                Anchor = new GameObject();
-                Anchor.name = "Brick Ring Anchor";
-                Bricks = new List<GameObject>();
+                Anchor = new GameObject {name = "Brick Ring Anchor"};
 
                 var brickPrefab = brickManager.BrickPrefab;
 
@@ -147,11 +155,11 @@ namespace Assets.Code
                 {
                     var newBrick = Instantiate(brickPrefab, Vector3.zero, Quaternion.identity) as GameObject;
 
+                    newBrick.GetComponent<BrickScript>().Initialise();
+
                     newBrick.transform.parent = Anchor.transform;
                     newBrick.transform.localEulerAngles = new Vector3(0, 0, 360.0f / numberOfBricks * i);
                     newBrick.transform.localPosition = (newBrick.transform.rotation * new Vector3(0, -1.7f, 0));
-
-                    Bricks.Add(newBrick);
                 }
             }
         }

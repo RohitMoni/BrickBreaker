@@ -4,6 +4,10 @@ namespace Assets.Code
 {
     public class BrickScript : MonoBehaviour
     {
+        /* Properties */
+        public int CollectionIndex;
+        public int RingIndex;
+
         /* References */
 
         // Managers
@@ -12,6 +16,12 @@ namespace Assets.Code
         // Use this for initialization
         void Start () {
             _gameManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<GameManagerScript>();
+            //GetComponent<BoxCollider2D>().enabled = false;
+        }
+
+        public void Initialise()
+        {
+            //GetComponent<BoxCollider2D>().enabled = true;            
         }
 	
         // Update is called once per frame
