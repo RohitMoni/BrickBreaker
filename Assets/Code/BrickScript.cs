@@ -48,7 +48,7 @@ namespace Assets.Code
                 //_brickDestroyEffect.transform.rotation = rotation;
 
                 // Play particle effect
-                _brickDestroyEffect.GetComponent<ParticleSystem>().Play();
+                _brickDestroyEffect.GetComponent<ParticleSystem>().Emit((int)(transform.parent.localScale.x * 8));
 
                 // Destroy brick
                 Destroy(gameObject);
