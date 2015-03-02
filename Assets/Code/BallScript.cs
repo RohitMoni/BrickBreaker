@@ -5,8 +5,8 @@ namespace Assets.Code
     public class BallScript : MonoBehaviour
     {
         /* Properties */
-        private float _speed;
-        public Vector3 _velocity;
+        public float Speed;
+        public Vector3 Velocity;
 
         /* References */
         private GameManagerScript _gameManager;
@@ -17,7 +17,7 @@ namespace Assets.Code
         // Use this for initialization
         void Start ()
         {
-            _speed = 0.03f;
+            Speed = 0.03f;
             
             _gameManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<GameManagerScript>();
             _paddleAnchor = GameObject.FindGameObjectWithTag("PaddleAnchor");
@@ -29,13 +29,13 @@ namespace Assets.Code
         void Update () {
             if (!_gameManager.IsPaused)
             {
-                transform.position += _velocity;
+                transform.position += Velocity;
             }
         }
 
-        public void ApplyVelocity(Vector3 newVelocity)
+        public void ApplyVelocity(Vector3 newDirection)
         {
-            _velocity = newVelocity * _speed;
+            Velocity = newDirection * Speed;
         }
 
         public void OnCollisionEnter2D(Collision2D collision2D)
@@ -64,7 +64,7 @@ namespace Assets.Code
                 var rotation = Quaternion.FromToRotation(Vector3.up, collision2D.contacts[0].normal);
                 var appliedVelocity = rotation*Vector3.up;
 
-                _velocity = appliedVelocity*_speed;
+                ApplyVelocity(appliedVelocity);
             }
         }
 

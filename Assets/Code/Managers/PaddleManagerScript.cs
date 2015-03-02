@@ -6,7 +6,8 @@ using System.Collections;
 
 public class PaddleManagerScript : MonoBehaviour
 {
-    private float _speed;
+    private float _paddleSpeed;
+    private float _ballSpeed;
 
     /* References */
     // Managers
@@ -27,7 +28,8 @@ public class PaddleManagerScript : MonoBehaviour
         _gameAnchor = GameObject.FindGameObjectWithTag("GameAnchor");
         _paddleAnchor = GameObject.FindGameObjectWithTag("PaddleAnchor");
         _camera = Camera.main;
-        _speed = 1.0f;
+        _paddleSpeed = 1.0f;
+        _ballSpeed = 0.3f;
     }
 
     // Update is called once per frame
@@ -39,11 +41,11 @@ public class PaddleManagerScript : MonoBehaviour
 #if UNITY_EDITOR
             if (Input.GetKey(KeyCode.LeftArrow))
             {
-                _paddleAnchor.transform.Rotate(Vector3.forward, _speed);
+                _paddleAnchor.transform.Rotate(Vector3.forward, _paddleSpeed);
             }
             if (Input.GetKey(KeyCode.RightArrow))
             {
-                _paddleAnchor.transform.Rotate(Vector3.back, _speed);
+                _paddleAnchor.transform.Rotate(Vector3.back, _paddleSpeed);
             }
             if (Input.GetKey(KeyCode.Space))
             {
@@ -84,11 +86,20 @@ public class PaddleManagerScript : MonoBehaviour
                 //    if ((opp.x > 0 && adj.y < 0) || (opp.x < 0 && adj.y > 0))
                 //        angleDegrees = -angleDegrees;
 
-                //    transform.eulerAngles += new Vector3(0, 0, (float)angleDegrees * _speed);
+                //    transform.eulerAngles += new Vector3(0, 0, (float)angleDegrees * _paddleSpeed);
                 //}
             }
 #endif
         }
+    }
+
+    public void CreateNewBall()
+    {
+        var ball = Instantiate(BallPrefab) as GameObject;
+        ball.GetComponent<BallScript>().Speed = _ballSpeed;
+        ball.transform.position = _paddleAnchor.transform.GetChild(0).transform.position;
+        ball.transform.position += new Vector3(0, 0.25f, 0);
+        ball.GetComponent<CircleCollider2D>().enabled = false;
     }
 
     public void LaunchBalls()
@@ -100,14 +111,26 @@ public class PaddleManagerScript : MonoBehaviour
                 // Parent the ball to the game anchor so that it stops using the paddles movement
                 child.parent = _gameAnchor.transform;
 
+                // Enable the collider so it collides with bricks now
+                child.GetComponent<CircleCollider2D>().enabled = true;
+
                 // Apply an acceleration to its velocity, rotated by the paddle's rotation
                 var rotation = _paddleAnchor.transform.rotation;
                 var appliedVelocity = rotation * Vector3.up;
 
                 child.GetComponent<BallScript>().ApplyVelocity(appliedVelocity);
-                child.GetComponent<CircleCollider2D>().enabled = true;
             }
         }
+    }
+
+    public void SetBallSpeed(float sliderValue)
+    {
+        _ballSpeed = sliderValue/100f;
+    }
+
+    public void SetPaddleSensitivity()
+    {
+        
     }
 
     public void Reset()
@@ -115,17 +138,9 @@ public class PaddleManagerScript : MonoBehaviour
         _paddleAnchor.transform.rotation = Quaternion.identity;
 
         // Remove all balls
-        foreach (Transform child in _gameAnchor.transform.Cast<Transform>().Where(child => child.tag == "Ball"))
-        {
-            Destroy(child.gameObject);
-        }
-    }
-
-    public void CreateNewBall()
-    {
-        var ball = Instantiate(BallPrefab) as GameObject;
-        ball.transform.position = _paddleAnchor.transform.GetChild(0).transform.position;
-        ball.transform.position += new Vector3(0, 0.25f, 0);
-        ball.GetComponent<CircleCollider2D>().enabled = false;
+        var balls = GameObject.FindGameObjectsWithTag("Ball");
+        
+        foreach (var ball in balls)
+            Destroy(ball);
     }
 }
