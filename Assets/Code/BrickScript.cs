@@ -42,7 +42,7 @@ namespace Assets.Code
                 position.z = -4;
                 _brickDestroyEffect.transform.position = position;
 
-                var rotationVel = collision2D.gameObject.GetComponent<BallScript>().Velocity.normalized;
+                var rotationVel = -collision2D.gameObject.GetComponent<BallScript>().Velocity.normalized;
                 var angle = Mathf.Atan2(rotationVel.y, rotationVel.x)*Mathf.Rad2Deg;
                 angle += 90;
                 var rotation = Quaternion.Euler(0, 0, angle);

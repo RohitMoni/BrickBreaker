@@ -5,7 +5,9 @@ namespace Assets.Code
 {
     public class GameManagerScript : MonoBehaviour
     {
+        /* Properties */
         private int _currentState; // -1 = loss, 0 = playing, 1 = won
+        public float GameSpeed;
         public bool IsPaused;
 
         /* References */
@@ -13,9 +15,13 @@ namespace Assets.Code
         private PaddleManagerScript _paddleManager;
         private BrickManagerScript  _brickManager;
 
+        private const float DefaultGameSpeed = 0.03f;
+        public static float GameSpeedFactor = 1.0f;
+
         // Use this for initialization
         void Start ()
         {
+            GameSpeed = DefaultGameSpeed;
             IsPaused = true;
             _currentState = 0;
             _menuManager = GetComponent<MenuManagerScript>();
@@ -39,6 +45,12 @@ namespace Assets.Code
             {
                 TogglePause();
             }
+        }
+
+        public void SetGameSpeed(float sliderValue)
+        {
+            GameSpeed = sliderValue / 100f;
+            GameSpeedFactor = GameSpeed/DefaultGameSpeed;
         }
 
         public void StartGame()

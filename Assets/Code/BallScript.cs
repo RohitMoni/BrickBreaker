@@ -5,7 +5,6 @@ namespace Assets.Code
     public class BallScript : MonoBehaviour
     {
         /* Properties */
-        public float Speed;
         public Vector3 Velocity;
 
         /* References */
@@ -35,7 +34,7 @@ namespace Assets.Code
 
         public void ApplyVelocity(Vector3 newDirection)
         {
-            Velocity = newDirection * Speed;
+            Velocity = newDirection * _gameManager.GameSpeed;
         }
 
         public void OnCollisionEnter2D(Collision2D collision2D)

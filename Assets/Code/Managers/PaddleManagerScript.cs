@@ -7,7 +7,6 @@ using System.Collections;
 public class PaddleManagerScript : MonoBehaviour
 {
     private float _paddleSpeed;
-    private float _ballSpeed;
 
     /* References */
     // Managers
@@ -29,7 +28,6 @@ public class PaddleManagerScript : MonoBehaviour
         _paddleAnchor = GameObject.FindGameObjectWithTag("PaddleAnchor");
         _camera = Camera.main;
         _paddleSpeed = 1.0f;
-        _ballSpeed = 0.03f;
     }
 
     // Update is called once per frame
@@ -97,7 +95,6 @@ public class PaddleManagerScript : MonoBehaviour
     {
         var ball = Instantiate(BallPrefab) as GameObject;
         var script = ball.GetComponent<BallScript>();
-        script.Speed = _ballSpeed;
         ball.transform.position = _paddleAnchor.transform.GetChild(0).transform.position;
         ball.transform.position += new Vector3(0, 0.25f, 0);
         ball.GetComponent<CircleCollider2D>().enabled = false;
@@ -122,11 +119,6 @@ public class PaddleManagerScript : MonoBehaviour
                 child.GetComponent<BallScript>().ApplyVelocity(appliedVelocity);
             }
         }
-    }
-
-    public void SetBallSpeed(float sliderValue)
-    {
-        _ballSpeed = sliderValue/100f;
     }
 
     public void SetPaddleSensitivity()

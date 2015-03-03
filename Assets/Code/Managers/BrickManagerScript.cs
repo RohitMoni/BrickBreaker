@@ -22,7 +22,7 @@ namespace Assets.Code
         private const float InitialScale = 0.20f;
         private const float FinalScale = 0.80f;
         private const float ScaleUpSpeed = 0.0008f;
-        private const float MaxScaleUp = 1.5f;
+        private const float MaxScaleUp = 1.7f;
 
         private static readonly Vector3 InitialScaleVec = new Vector3(InitialScale, InitialScale, InitialScale);
         private static readonly Vector3 FinalScaleVec = new Vector3(FinalScale, FinalScale, FinalScale);
@@ -65,13 +65,13 @@ namespace Assets.Code
                 ring.Time += Time.deltaTime;
 
                 // check to see if time is less than set up time
-                if (ring.Time <= TimeToSetUp)
+                if (ring.Time <= TimeToSetUp / GameManagerScript.GameSpeedFactor)
                 {
-                    ring.Anchor.transform.localScale = Vector3.Lerp(InitialScaleVec, FinalScaleVec, ring.Time);
+                    ring.Anchor.transform.localScale = Vector3.Lerp(InitialScaleVec, FinalScaleVec, ring.Time / TimeToSetUp * GameManagerScript.GameSpeedFactor);
                 }
                 else
                 {
-                    ring.Anchor.transform.localScale += new Vector3(ScaleUpSpeed, ScaleUpSpeed, ScaleUpSpeed);
+                    ring.Anchor.transform.localScale += new Vector3(ScaleUpSpeed * GameManagerScript.GameSpeedFactor, ScaleUpSpeed * GameManagerScript.GameSpeedFactor, ScaleUpSpeed * GameManagerScript.GameSpeedFactor);
                 }
 
                 if (ring.Anchor.transform.localScale.x > MaxScaleUp)
@@ -80,7 +80,8 @@ namespace Assets.Code
                 }
             }
 
-            _spawnTimer += Time.deltaTime;
+            // Update the ring spawner
+            _spawnTimer += Time.deltaTime * GameManagerScript.GameSpeedFactor;
             if (_spawnTimer >= TimeToSpawn)
             {
                 // Create new ring
