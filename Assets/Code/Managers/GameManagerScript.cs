@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Code
 {
@@ -7,13 +8,17 @@ namespace Assets.Code
     {
         /* Properties */
         private int _currentState; // -1 = loss, 0 = playing, 1 = won
-        public float GameSpeed;
         public bool IsPaused;
+
+        public float GameSpeed;
+        private int _textPointScore;
+        private int _actualPointScore;
 
         /* References */
         private MenuManagerScript   _menuManager;
         private PaddleManagerScript _paddleManager;
         private BrickManagerScript  _brickManager;
+        private Text _scoreText;
 
         private const float DefaultGameSpeed = 0.03f;
         public static float GameSpeedFactor = 1.0f;
@@ -24,13 +29,18 @@ namespace Assets.Code
             GameSpeed = DefaultGameSpeed;
             IsPaused = true;
             _currentState = 0;
+            _textPointScore = _actualPointScore = 0;
+
+
             _menuManager = GetComponent<MenuManagerScript>();
             _paddleManager = GetComponent<PaddleManagerScript>();
             _brickManager = GetComponent<BrickManagerScript>();
+            _scoreText = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<Text>();
         }
 	
         // Update is called once per frame
-        void Update () {
+        void Update ()
+        {
             switch (_currentState)
             {
                 case -1:    // Switch to lost screen
@@ -45,6 +55,18 @@ namespace Assets.Code
             {
                 TogglePause();
             }
+
+            if (IsPaused)
+                return;
+
+            // Update score
+            _textPointScore += Mathf.CeilToInt((_actualPointScore - _textPointScore)/2f);
+            _scoreText.text = _textPointScore.ToString();
+        }
+
+        public void AddScore(int scoreToAdd)
+        {
+            _actualPointScore += scoreToAdd;
         }
 
         public void SetGameSpeed(float sliderValue)
@@ -55,6 +77,7 @@ namespace Assets.Code
 
         public void StartGame()
         {
+            ResetGame();
             _paddleManager.Reset();
             _paddleManager.CreateNewBall();
             _brickManager.StartUp();
@@ -67,9 +90,8 @@ namespace Assets.Code
 
         public void StopGame()
         {
-            _paddleManager.Reset();
-            _brickManager.CleanUp();
-            IsPaused = true;
+            ResetGame();
+
             // Disable the ingame menu and enable the start menu
             _menuManager.GameToStartMenu();
 
@@ -89,7 +111,11 @@ namespace Assets.Code
 
         private void ResetGame()
         {
-            
+            _actualPointScore = _textPointScore = 0;
+
+            _paddleManager.Reset();
+            _brickManager.CleanUp();
+            IsPaused = true;
         }
 
         public void SetWinLossState(bool state)

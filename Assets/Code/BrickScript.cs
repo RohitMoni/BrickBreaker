@@ -5,8 +5,7 @@ namespace Assets.Code
     public class BrickScript : MonoBehaviour
     {
         /* Properties */
-        public int CollectionIndex;
-        public int RingIndex;
+        public int PointValue;
 
         /* References */
         private GameObject _brickDestroyEffect;
@@ -18,6 +17,7 @@ namespace Assets.Code
         void Start () {
             _gameManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<GameManagerScript>();
             _brickDestroyEffect = GameObject.FindGameObjectWithTag("ParticleBrickDestroy");
+            PointValue = 50;
             //GetComponent<BoxCollider2D>().enabled = false;
         }
 
@@ -50,6 +50,9 @@ namespace Assets.Code
 
                 // Play particle effect
                 _brickDestroyEffect.GetComponent<ParticleSystem>().Emit((int)(transform.parent.localScale.x * 8));
+
+                // Add points
+                _gameManager.AddScore(PointValue);
 
                 // Destroy brick
                 Destroy(gameObject);
