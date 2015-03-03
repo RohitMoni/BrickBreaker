@@ -151,6 +151,7 @@ public class PaddleManagerScript : MonoBehaviour
 
     public void SetPaddleSensitivity(float newValue)
     {
+        newValue /= 50f;
         _paddleSensitivity = newValue;
     }
 
