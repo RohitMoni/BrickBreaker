@@ -13,6 +13,7 @@ public class PaddleManagerScript : MonoBehaviour
     private float _paddleSpeed;
 #endif
     private float _paddleSensitivity;
+    private bool _relativePaddleMode;
 
     /* References */
     // Managers
@@ -43,6 +44,7 @@ public class PaddleManagerScript : MonoBehaviour
 #endif
 
         _paddleSensitivity = defaultPaddleSensitivity;
+        _relativePaddleMode = true;
     }
 
     // Update is called once per frame
@@ -68,46 +70,51 @@ public class PaddleManagerScript : MonoBehaviour
 #if UNITY_ANDROID
             foreach (var touch in Input.touches)
             {
-                // ABSOLUTE MOVEMENT
-                //if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)
-                //{
-                //    // Ignore touches that hit the pause button
-                //    if (touch.position.y > Screen.height / 10 * 9)
-                //        break;
-
-                //    var worldPos = _camera.ScreenToWorldPoint(touch.position);
-
-                //    var angleRadians = Math.Atan2(worldPos.y, worldPos.x);
-                //    var angleDegrees = angleRadians * 180.0f / Math.PI;
-
-                //    angleDegrees += 90;
-
-                //    _paddleAnchor.transform.eulerAngles = new Vector3(0, 0, (float)angleDegrees);
-                //}
-
-                // RELATIVE MOVEMENT
-                if (touch.phase == TouchPhase.Moved)
+                if (_relativePaddleMode)
                 {
-                    var touchPoint = _camera.ScreenToWorldPoint(touch.position);
-                    touchPoint.z = 0;
-                    var deltaV2 = touch.deltaPosition;
-                    var delta = new Vector3(deltaV2.x, deltaV2.y, 0);
+                    // RELATIVE MOVEMENT
+                    if (touch.phase == TouchPhase.Moved)
+                    {
+                        var touchPoint = _camera.ScreenToWorldPoint(touch.position);
+                        touchPoint.z = 0;
+                        var deltaV2 = touch.deltaPosition;
+                        var delta = new Vector3(deltaV2.x, deltaV2.y, 0);
 
-                    var finalPoint = touchPoint + delta;
+                        var finalPoint = touchPoint + delta;
 
-                    var touchPointAngle = Mathf.Atan2(touchPoint.y, touchPoint.x)*Mathf.Rad2Deg + 180f;
-                    var finalPointAngle = Mathf.Atan2(finalPoint.y, finalPoint.x)*Mathf.Rad2Deg + 180f;
+                        var touchPointAngle = Mathf.Atan2(touchPoint.y, touchPoint.x)*Mathf.Rad2Deg + 180f;
+                        var finalPointAngle = Mathf.Atan2(finalPoint.y, finalPoint.x)*Mathf.Rad2Deg + 180f;
 
-                    var angleDifference = finalPointAngle - touchPointAngle;
-                    if (Mathf.Abs(angleDifference) > 300)
-                        // arbitrary high number that represents when the two points are in different quadrants
-                        angleDifference += (360 * -Mathf.Sign(angleDifference));
+                        var angleDifference = finalPointAngle - touchPointAngle;
+                        if (Mathf.Abs(angleDifference) > 300)
+                            // arbitrary high number that represents when the two points are in different quadrants
+                            angleDifference += (360*-Mathf.Sign(angleDifference));
 
-                    angleDifference *= _paddleSensitivity;
+                        angleDifference *= _paddleSensitivity;
 
-                    var rotationChange = new Quaternion {eulerAngles = new Vector3(0, 0, angleDifference)};
+                        var rotationChange = new Quaternion {eulerAngles = new Vector3(0, 0, angleDifference)};
 
-                    _paddleAnchor.transform.rotation = _paddleAnchor.transform.rotation * rotationChange;
+                        _paddleAnchor.transform.rotation = _paddleAnchor.transform.rotation*rotationChange;
+                    }
+                }
+                else
+                {
+                    // ABSOLUTE MOVEMENT
+                    if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)
+                    {
+                        // Ignore touches that hit the pause button
+                        if (touch.position.y > Screen.height / 10 * 9)
+                            break;
+
+                        var worldPos = _camera.ScreenToWorldPoint(touch.position);
+
+                        var angleRadians = Math.Atan2(worldPos.y, worldPos.x);
+                        var angleDegrees = angleRadians * 180.0f / Math.PI;
+
+                        angleDegrees += 90;
+
+                        _paddleAnchor.transform.eulerAngles = new Vector3(0, 0, (float)angleDegrees);
+                    }
                 }
 
                 if (touch.tapCount == 2)
@@ -153,6 +160,11 @@ public class PaddleManagerScript : MonoBehaviour
     {
         newValue /= 50f;
         _paddleSensitivity = newValue;
+    }
+
+    public void SetPaddleMovementRelative(bool isMovementRelative)
+    {
+        _relativePaddleMode = isMovementRelative;
     }
 
     public void Reset()
