@@ -26,10 +26,11 @@ public class PaddleManagerScript : MonoBehaviour
     // Other
     public  GameObject BallPrefab;
     private Camera _camera;
+    private EventTextScript _eventTextScipt;
 
     /* Constants */
 
-    private const float defaultPaddleSensitivity = 0.1f;
+    private const float DefaultPaddleSensitivity = 0.1f;
 
     // Use this for initialization
     void Start()
@@ -37,13 +38,14 @@ public class PaddleManagerScript : MonoBehaviour
         _gameManager = GetComponent<GameManagerScript>();
         _gameAnchor = GameObject.FindGameObjectWithTag("GameAnchor");
         _paddleAnchor = GameObject.FindGameObjectWithTag("PaddleAnchor");
+        _eventTextScipt = GameObject.FindGameObjectWithTag("EventText").GetComponent<EventTextScript>();
         _camera = Camera.main;
 
 #if UNITY_EDITOR
         _paddleSpeed = 1.0f;
 #endif
 
-        _paddleSensitivity = defaultPaddleSensitivity;
+        _paddleSensitivity = DefaultPaddleSensitivity;
         _relativePaddleMode = true;
     }
 
@@ -153,6 +155,11 @@ public class PaddleManagerScript : MonoBehaviour
 
                 child.GetComponent<BallScript>().ApplyVelocity(appliedVelocity);
             }
+        }
+
+        if (_eventTextScipt.GetCurrentEventText() == "Tap Twice")
+        {
+            _eventTextScipt.StopEvent();
         }
     }
 

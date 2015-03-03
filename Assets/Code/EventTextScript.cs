@@ -17,10 +17,10 @@ public class EventTextScript : MonoBehaviour {
     private Text _eventText;
 
     /* Constants */
-    private const float FlashTimeCycle = 1.0f;
+    private const float FlashTimeCycle = 1.0f/2f;
     private const float Threshold = 0.1f;
-    private const int PanelMaxAlpha = 150;
-    private const int TextMaxAlpha = 255;
+    private const float PanelMaxAlpha = 255/255f;
+    private const float TextMaxAlpha = 255/255f;
 
 	// Use this for initialization
 	void Start ()
@@ -45,15 +45,20 @@ public class EventTextScript : MonoBehaviour {
 	    _timerCurrentTime += Time.deltaTime;
 
         // Update flash direction
-	    if (_timerCurrentTime/(FlashTimeCycle/2f) <= Threshold)
+	    if (_timerCurrentTime >= FlashTimeCycle)
+	    {
 	        _flashDirection = -1*_flashDirection;
+	        _timerCurrentTime = 0;
+	    }
 
-        // Check to see if we stop the event
+	    Debug.Log(_timerCurrentTime);
+
+	    // Check to see if we stop the event
 	    if (_timeToStop != 0 && _timerCurrentTime > _timeToStop)
 	        StopEvent();
 
         // Continue flashing
-	    var flashFactor = (_flashDirection*(Time.deltaTime/(FlashTimeCycle/2f)));
+	    var flashFactor = (_flashDirection*(Time.deltaTime/(FlashTimeCycle)));
 
 	    var newColour = _backPanel.color;
 	    newColour.a += PanelMaxAlpha * flashFactor;
@@ -62,6 +67,7 @@ public class EventTextScript : MonoBehaviour {
 	    newColour = _eventText.color;
 	    newColour.a += TextMaxAlpha * flashFactor;
 	    _eventText.color = newColour;
+
 	}
 
     public void CreateEvent(string textToDisplay, float timeTillStop =0)
@@ -89,6 +95,11 @@ public class EventTextScript : MonoBehaviour {
 
         // Reset timers and things
         Reset();
+    }
+
+    public string GetCurrentEventText()
+    {
+        return _eventText.text;
     }
 
     private void Reset()
