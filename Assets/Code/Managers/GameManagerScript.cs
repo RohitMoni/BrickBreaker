@@ -18,6 +18,7 @@ namespace Assets.Code
         private MenuManagerScript   _menuManager;
         private PaddleManagerScript _paddleManager;
         private BrickManagerScript  _brickManager;
+        private EventTextScript     _eventManager;
         private Text _scoreText;
 
         private const float DefaultGameSpeed = 0.03f;
@@ -31,10 +32,10 @@ namespace Assets.Code
             _currentState = 0;
             _textPointScore = _actualPointScore = 0;
 
-
             _menuManager = GetComponent<MenuManagerScript>();
             _paddleManager = GetComponent<PaddleManagerScript>();
             _brickManager = GetComponent<BrickManagerScript>();
+            _eventManager = GameObject.FindGameObjectWithTag("EventText").GetComponent<EventTextScript>();
             _scoreText = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<Text>();
         }
 	
@@ -82,8 +83,12 @@ namespace Assets.Code
             _paddleManager.CreateNewBall();
             _brickManager.StartUp();
             IsPaused = false;
+
             // Move from start menu to ingame
             _menuManager.StartMenuToGame();
+
+            // Create initial event text
+            _eventManager.CreateEvent("Tap Twice");
 
             _currentState = 0;
         }
