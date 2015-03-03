@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Mime;
 using Assets.Code;
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class PaddleManagerScript : MonoBehaviour
 {
+    /* Properties */
+#if UNITY_EDITOR
     private float _paddleSpeed;
+#endif
+    private float _paddleSensitivity;
 
     /* References */
     // Managers
@@ -20,6 +26,10 @@ public class PaddleManagerScript : MonoBehaviour
     public  GameObject BallPrefab;
     private Camera _camera;
 
+    /* Constants */
+
+    private const float defaultPaddleSensitivity = 0.1f;
+
     // Use this for initialization
     void Start()
     {
@@ -27,7 +37,12 @@ public class PaddleManagerScript : MonoBehaviour
         _gameAnchor = GameObject.FindGameObjectWithTag("GameAnchor");
         _paddleAnchor = GameObject.FindGameObjectWithTag("PaddleAnchor");
         _camera = Camera.main;
+
+#if UNITY_EDITOR
         _paddleSpeed = 1.0f;
+#endif
+
+        _paddleSensitivity = defaultPaddleSensitivity;
     }
 
     // Update is called once per frame
@@ -53,39 +68,52 @@ public class PaddleManagerScript : MonoBehaviour
 #if UNITY_ANDROID
             foreach (var touch in Input.touches)
             {
-                if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)
+                // ABSOLUTE MOVEMENT
+                //if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)
+                //{
+                //    // Ignore touches that hit the pause button
+                //    if (touch.position.y > Screen.height / 10 * 9)
+                //        break;
+
+                //    var worldPos = _camera.ScreenToWorldPoint(touch.position);
+
+                //    var angleRadians = Math.Atan2(worldPos.y, worldPos.x);
+                //    var angleDegrees = angleRadians * 180.0f / Math.PI;
+
+                //    angleDegrees += 90;
+
+                //    _paddleAnchor.transform.eulerAngles = new Vector3(0, 0, (float)angleDegrees);
+                //}
+
+                // RELATIVE MOVEMENT
+                if (touch.phase == TouchPhase.Moved)
                 {
-                    // Ignore touches that hit the pause button
-                    if (touch.position.y > Screen.height / 10 * 9)
-                        break;
+                    var touchPoint = _camera.ScreenToWorldPoint(touch.position);
+                    touchPoint.z = 0;
+                    var deltaV2 = touch.deltaPosition;
+                    var delta = new Vector3(deltaV2.x, deltaV2.y, 0);
 
-                    var worldPos = _camera.ScreenToWorldPoint(touch.position);
+                    var finalPoint = touchPoint + delta;
 
-                    var angleRadians = Math.Atan2(worldPos.y, worldPos.x);
-                    var angleDegrees = angleRadians * 180.0f / Math.PI;
+                    var touchPointAngle = Mathf.Atan2(touchPoint.y, touchPoint.x)*Mathf.Rad2Deg + 180f;
+                    var finalPointAngle = Mathf.Atan2(finalPoint.y, finalPoint.x)*Mathf.Rad2Deg + 180f;
 
-                    angleDegrees += 90;
+                    var angleDifference = finalPointAngle - touchPointAngle;
+                    if (Mathf.Abs(angleDifference) > 300)
+                        // arbitrary high number that represents when the two points are in different quadrants
+                        angleDifference += (360 * -Mathf.Sign(angleDifference));
 
-                    _paddleAnchor.transform.eulerAngles = new Vector3(0, 0, (float)angleDegrees);
+                    angleDifference *= _paddleSensitivity;
+
+                    var rotationChange = new Quaternion {eulerAngles = new Vector3(0, 0, angleDifference)};
+
+                    _paddleAnchor.transform.rotation = _paddleAnchor.transform.rotation * rotationChange;
                 }
 
                 if (touch.tapCount == 2)
                 {
                     LaunchBalls();
                 }
-
-                //if (touch.phase == TouchPhase.Moved)
-                //{
-                //    var adj = _camera.ScreenToWorldPoint(touch.position);
-                //    var opp = _camera.ScreenToWorldPoint(touch.deltaPosition);
-
-                //    var angleDegrees = Math.Atan(opp.magnitude / adj.magnitude) * 180 / Math.PI / 10.0f;
-
-                //    if ((opp.x > 0 && adj.y < 0) || (opp.x < 0 && adj.y > 0))
-                //        angleDegrees = -angleDegrees;
-
-                //    transform.eulerAngles += new Vector3(0, 0, (float)angleDegrees * _paddleSpeed);
-                //}
             }
 #endif
         }
@@ -121,9 +149,9 @@ public class PaddleManagerScript : MonoBehaviour
         }
     }
 
-    public void SetPaddleSensitivity()
+    public void SetPaddleSensitivity(float newValue)
     {
-        
+        _paddleSensitivity = newValue;
     }
 
     public void Reset()
