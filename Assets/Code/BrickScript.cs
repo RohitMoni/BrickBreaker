@@ -6,6 +6,8 @@ namespace Assets.Code
     {
         /* Properties */
         public int PointValue;
+        public int HealthTotal;
+        public int CurrentHealth;
 
         /* References */
         private GameObject _brickDestroyEffect;
@@ -18,6 +20,8 @@ namespace Assets.Code
             _gameManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<GameManagerScript>();
             _brickDestroyEffect = GameObject.FindGameObjectWithTag("ParticleBrickDestroy");
             PointValue = 50;
+            HealthTotal = 4;
+            CurrentHealth = 4;
             //GetComponent<BoxCollider2D>().enabled = false;
         }
 

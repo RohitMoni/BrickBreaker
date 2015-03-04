@@ -51,8 +51,6 @@ public class EventTextScript : MonoBehaviour {
 	        _timerCurrentTime = 0;
 	    }
 
-	    Debug.Log(_timerCurrentTime);
-
 	    // Check to see if we stop the event
 	    if (_timeToStop != 0 && _timerCurrentTime > _timeToStop)
 	        StopEvent();

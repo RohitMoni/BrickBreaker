@@ -88,7 +88,7 @@ public class PaddleManagerScript : MonoBehaviour
                         var finalPointAngle = Mathf.Atan2(finalPoint.y, finalPoint.x)*Mathf.Rad2Deg + 180f;
 
                         var angleDifference = finalPointAngle - touchPointAngle;
-                        if (Mathf.Abs(angleDifference) > 300)
+                        if (Mathf.Abs(angleDifference) > 330)
                             // arbitrary high number that represents when the two points are in different quadrants
                             angleDifference += (360*-Mathf.Sign(angleDifference));
 
