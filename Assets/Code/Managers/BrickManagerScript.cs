@@ -16,20 +16,15 @@ namespace Assets.Code
         /* Properties */
         private List<BrickRing> _brickRings;
 
-        private float _spawnTimer;
         private bool _brickPause;
 
         /* Consts */
+        private const int NumberOfRings = 3;
+
         private const float InitialScale = 0.20f;
-        private const float FinalScale = 0.60f;
-        private const float ScaleUpSpeed = 0.0008f;
-        private const float MaxScaleUp = 1.7f;
+        private readonly float[] _ringScaleLevels = { 1.7f, 1.22f, 0.74f };
 
-        private static readonly Vector3 InitialScaleVec = new Vector3(InitialScale, InitialScale, InitialScale);
-        private static readonly Vector3 FinalScaleVec = new Vector3(FinalScale, FinalScale, FinalScale);
-
-        private const float TimeToSetUp = 0.75f;
-        private const float TimeToSpawn = 10.00f;
+        private const float ScaleUpSpeed = 0.02f;
 
         // Use this for initialization
         void Start ()
@@ -51,52 +46,37 @@ namespace Assets.Code
                     Destroy(brick.gameObject);
             }
 #endif
-
-            CheckRings();
-
             if (_gameManager.IsPaused || _brickPause)
                 return;
 
-	        // Update each ring
+            CheckRings();
+
+            // Check to see if there are the requisite number of brick rings
+            if (_brickRings.Count < NumberOfRings)
+            {
+                // If not, spawn an equivalent number of brick rings
+                for (var i = 0; i < NumberOfRings - _brickRings.Count; i++)
+                    CreateNewBrickRing();
+            }
+            
+            // Update each brick ring
             for (var i = 0; i < _brickRings.Count; i++)
             {
-                var ring = _brickRings[i];
-
-                // Update time
-                ring.Time += Time.deltaTime;
-
-                // check to see if time is less than set up time
-                if (ring.Time <= TimeToSetUp / GameManagerScript.GameSpeedFactor)
+                // Check to see if the brick ring is 'set up' = It's scale is the right level
+                if (_brickRings[i].Anchor.transform.localScale.x < _ringScaleLevels[i])
                 {
-                    ring.Anchor.transform.localScale = Vector3.Lerp(InitialScaleVec, FinalScaleVec, ring.Time / TimeToSetUp * GameManagerScript.GameSpeedFactor);
-                }
-                else
-                {
-                    ring.Anchor.transform.localScale += new Vector3(ScaleUpSpeed * GameManagerScript.GameSpeedFactor, ScaleUpSpeed * GameManagerScript.GameSpeedFactor, ScaleUpSpeed * GameManagerScript.GameSpeedFactor);
-                    var scaleVal = ring.Anchor.transform.localScale.x;
-                    foreach (Transform child in ring.Anchor.transform)
+                    // If not, we need to push the ring out
+                    _brickRings[i].Anchor.transform.localScale += new Vector3(ScaleUpSpeed, ScaleUpSpeed, ScaleUpSpeed);
+                    var scaleVal = _brickRings[i].Anchor.transform.localScale.x;
+                    foreach (Transform child in _brickRings[i].Anchor.transform)
                     {
                         var scale = child.localScale;
-                        scale.y = 1/scaleVal;
+                        scale.y = 1 / scaleVal;
                         child.localScale = scale;
                     }
                 }
 
-                if (ring.Anchor.transform.localScale.x > MaxScaleUp)
-                {
-                    _brickPause = true;
-                }
-            }
-
-            // Update the ring spawner
-            _spawnTimer += Time.deltaTime * GameManagerScript.GameSpeedFactor;
-            if (_spawnTimer >= TimeToSpawn)
-            {
-                // Create new ring
-                CreateNewBrickRing();
-
-                // Reset spawn timer
-                _spawnTimer = 0;
+                // Do other effects with brick rings
             }
         }
 
@@ -136,9 +116,6 @@ namespace Assets.Code
 
         public void StartUp()
         {
-            // Reset the spawn timer
-            _spawnTimer = 0;
-
             // Create new ones
             CreateNewBrickRing();
         }
