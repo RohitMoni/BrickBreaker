@@ -1,6 +1,8 @@
 ﻿using System.Linq;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
+using Timer = System.Timers.Timer;
 
 namespace Assets.Code
 {
@@ -9,10 +11,12 @@ namespace Assets.Code
         /* Properties */
         private int _currentState; // -1 = loss, 0 = playing, 1 = won
         public bool IsPaused;
+        public bool IsStarted;
 
         public float GameSpeed;
         private int _textPointScore;
         private int _actualPointScore;
+        private float _timer;
 
         /* References */
         private MenuManagerScript   _menuManager;
@@ -20,7 +24,9 @@ namespace Assets.Code
         private BrickManagerScript  _brickManager;
         private EventTextScript     _eventManager;
         private Text _scoreText;
+        private Text _timeText;
 
+        /* Constants */
         private const float DefaultGameSpeed = 0.03f;
         public static float GameSpeedFactor = 1.0f;
 
@@ -33,12 +39,14 @@ namespace Assets.Code
             IsPaused = true;
             _currentState = 0;
             _textPointScore = _actualPointScore = 0;
+            _timer = 0;
 
             _menuManager = GetComponent<MenuManagerScript>();
             _paddleManager = GetComponent<PaddleManagerScript>();
             _brickManager = GetComponent<BrickManagerScript>();
             _eventManager = GameObject.FindGameObjectWithTag("EventText").GetComponent<EventTextScript>();
             _scoreText = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<Text>();
+            _timeText = GameObject.FindGameObjectWithTag("TimeText").GetComponent<Text>();
         }
 	
         // Update is called once per frame
@@ -65,6 +73,15 @@ namespace Assets.Code
             // Update score
             _textPointScore += Mathf.CeilToInt((_actualPointScore - _textPointScore)/2f);
             _scoreText.text = _textPointScore.ToString();
+
+            // Update time
+            if (IsStarted)
+            {
+                _timer += Time.deltaTime;
+                var minutes = Mathf.Floor(_timer/60);
+                var seconds = (_timer%60);
+                _timeText.text = minutes.ToString("00") + ":" + seconds.ToString("00");
+            }
         }
 
         public void AddScore(int scoreToAdd)
@@ -85,12 +102,10 @@ namespace Assets.Code
             _paddleManager.CreateNewBall();
             _brickManager.StartUp();
             IsPaused = false;
+            IsStarted = false;
 
             // Move from start menu to ingame
             _menuManager.StartMenuToGame();
-
-            // Create initial event text
-            _eventManager.CreateEvent("Tap Twice");
 
             _currentState = 0;
         }

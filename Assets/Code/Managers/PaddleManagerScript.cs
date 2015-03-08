@@ -26,7 +26,7 @@ public class PaddleManagerScript : MonoBehaviour
     // Other
     public  GameObject BallPrefab;
     private Camera _camera;
-    private EventTextScript _eventTextScipt;
+    private EventTextScript _eventManager;
 
     /* Constants */
 
@@ -38,7 +38,7 @@ public class PaddleManagerScript : MonoBehaviour
         _gameManager = GetComponent<GameManagerScript>();
         _gameAnchor = GameObject.FindGameObjectWithTag("GameAnchor");
         _paddleAnchor = GameObject.FindGameObjectWithTag("PaddleAnchor");
-        _eventTextScipt = GameObject.FindGameObjectWithTag("EventText").GetComponent<EventTextScript>();
+        _eventManager = GameObject.FindGameObjectWithTag("EventText").GetComponent<EventTextScript>();
         _camera = Camera.main;
 
 #if UNITY_EDITOR
@@ -130,11 +130,13 @@ public class PaddleManagerScript : MonoBehaviour
 
     public void CreateNewBall()
     {
-        var ball = Instantiate(BallPrefab) as GameObject;
-        var script = ball.GetComponent<BallScript>();
+        var ball = Instantiate(BallPrefab);
         ball.transform.position = _paddleAnchor.transform.GetChild(0).transform.position;
         ball.transform.position += new Vector3(0, 0.25f, 0);
         ball.GetComponent<CircleCollider2D>().enabled = false;
+
+        // Create initial event text
+        _eventManager.CreateEvent("Tap Twice", 3);
     }
 
     public void LaunchBalls()
@@ -157,9 +159,10 @@ public class PaddleManagerScript : MonoBehaviour
             }
         }
 
-        if (_eventTextScipt.GetCurrentEventText() == "Tap Twice")
+        if (_eventManager.GetCurrentEventText() == "Tap Twice")
         {
-            _eventTextScipt.StopEvent();
+            _eventManager.StopEvent();
+            _gameManager.IsStarted = true;
         }
     }
 
