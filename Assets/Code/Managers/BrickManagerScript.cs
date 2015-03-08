@@ -26,6 +26,8 @@ namespace Assets.Code
 
         private const float ScaleUpSpeed = 0.02f;
 
+        private const float RingRotationSpeed = 0.1f;
+
         // Use this for initialization
         void Start ()
         {
@@ -60,6 +62,7 @@ namespace Assets.Code
             }
             
             // Update each brick ring
+            var ringRotation = 1;
             for (var i = 0; i < _brickRings.Count; i++)
             {
                 // Check to see if the brick ring is 'set up' = It's scale is the right level
@@ -77,6 +80,10 @@ namespace Assets.Code
                 }
 
                 // Do other effects with brick rings
+
+                // Rotate rings
+                _brickRings[i].Anchor.transform.Rotate(Vector3.forward, RingRotationSpeed * ringRotation);
+                ringRotation *= -1;
             }
         }
 
