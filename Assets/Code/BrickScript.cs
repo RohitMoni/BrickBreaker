@@ -23,8 +23,8 @@ namespace Assets.Code
             _gameManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<GameManagerScript>();
             _brickDestroyEffect = GameObject.FindGameObjectWithTag("ParticleBrickDestroy");
             PointValue = 50;
-            HealthTotal = 4;
-            CurrentHealth = 4;
+            HealthTotal = 1;
+            CurrentHealth = 1;
             GetComponent<SpriteRenderer>().sprite = BrickHealth0;
             //GetComponent<BoxCollider2D>().enabled = false;
         }

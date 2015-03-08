@@ -24,6 +24,8 @@ namespace Assets.Code
         private const float DefaultGameSpeed = 0.03f;
         public static float GameSpeedFactor = 1.0f;
 
+        public const int BonusPointScore = 50;
+
         // Use this for initialization
         void Start ()
         {
