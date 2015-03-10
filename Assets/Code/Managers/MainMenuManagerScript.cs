@@ -19,6 +19,9 @@ public class MainMenuManagerScript : MonoBehaviour {
 
     private Text _lastScoreText;
     private Text _highScoreText;
+    private Toggle _relativeMovementToggle;
+    private Slider _sensitivitySlider;
+    private Slider _ballSpeedSlider;
 
     /* Constants */
     private const float CameraShiftTime = 0.2f;
@@ -36,12 +39,19 @@ public class MainMenuManagerScript : MonoBehaviour {
 	    _camera = Camera.main;
 	    _lastScoreText = GameObject.FindGameObjectWithTag("LastScoreText").GetComponent<Text>();
         _highScoreText = GameObject.FindGameObjectWithTag("HighScoreText").GetComponent<Text>();
-
-	    _highScoreText.text = GameVariablesScript.HighScore.ToString();
-	    _lastScoreText.text = GameVariablesScript.LastScore.ToString();
+        _relativeMovementToggle = GameObject.FindGameObjectWithTag("RelativeMovementToggle").GetComponent<Toggle>();
+        _sensitivitySlider = GameObject.FindGameObjectWithTag("SensitivitySlider").GetComponent<Slider>();
+        _ballSpeedSlider = GameObject.FindGameObjectWithTag("BallSpeedSlider").GetComponent<Slider>();
 
         _shiftStartPosition = new Vector3(GameVariablesScript.ScreenToStartOn * 1080, 0, -10);
 	    _camera.transform.position = _shiftStartPosition;
+
+        // Setting ui elements from game variables
+        _highScoreText.text = GameVariablesScript.HighScore.ToString();
+        _lastScoreText.text = GameVariablesScript.LastScore.ToString();
+	    _relativeMovementToggle.isOn = GameVariablesScript.RelativePaddle;
+	    _sensitivitySlider.value = GameVariablesScript.Sensitivity*GameVariablesScript.PaddleSensitivityCoeff;
+	    _ballSpeedSlider.value = GameVariablesScript.BallSpeed*GameVariablesScript.BallSpeedCoeff;
 	}
 	
 	// Update is called once per frame
@@ -119,7 +129,6 @@ public class MainMenuManagerScript : MonoBehaviour {
         Application.Quit();
     }
 
-
     #region Settings
     public void SetRelativePaddle(bool value)
     {
@@ -128,7 +137,7 @@ public class MainMenuManagerScript : MonoBehaviour {
 
     public void SetSensitivity(float value)
     {
-        GameVariablesScript.Sensitivity = (int)value;
+        GameVariablesScript.Sensitivity = value / GameVariablesScript.PaddleSensitivityCoeff;
     }
 
     public void SetBallSpeed(float value)

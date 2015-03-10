@@ -12,9 +12,7 @@ public class PaddleManagerScript : MonoBehaviour
 #if UNITY_EDITOR
     private float _paddleSpeed;
 #endif
-    private float _paddleSensitivity;
-    private bool _relativePaddleMode;
-
+    
     /* References */
     // Managers
     private GameManagerScript _gameManager;
@@ -28,9 +26,6 @@ public class PaddleManagerScript : MonoBehaviour
     private Camera _camera;
     private EventTextScript _eventManager;
 
-    /* Constants */
-    private const float DefaultPaddleSensitivity = 0.1f;
-
     // Use this for initialization
     void Start()
     {
@@ -43,9 +38,6 @@ public class PaddleManagerScript : MonoBehaviour
 #if UNITY_EDITOR
         _paddleSpeed = 1.0f;
 #endif
-
-        _paddleSensitivity = DefaultPaddleSensitivity;
-        _relativePaddleMode = true;
     }
 
     // Update is called once per frame
@@ -71,7 +63,7 @@ public class PaddleManagerScript : MonoBehaviour
 #if UNITY_ANDROID
             foreach (var touch in Input.touches)
             {
-                if (_relativePaddleMode)
+                if (GameVariablesScript.RelativePaddle)
                 {
                     // RELATIVE MOVEMENT
                     if (touch.phase == TouchPhase.Moved)
@@ -91,7 +83,7 @@ public class PaddleManagerScript : MonoBehaviour
                             // arbitrary high number that represents when the two points are in different quadrants
                             angleDifference += (360*-Mathf.Sign(angleDifference));
 
-                        angleDifference *= _paddleSensitivity;
+                        angleDifference *= GameVariablesScript.Sensitivity;
 
                         var rotationChange = new Quaternion {eulerAngles = new Vector3(0, 0, angleDifference)};
 
@@ -163,17 +155,6 @@ public class PaddleManagerScript : MonoBehaviour
             _eventManager.StopEvent();
             _gameManager.TimerStarted = true;
         }
-    }
-
-    public void SetPaddleSensitivity(float newValue)
-    {
-        newValue /= 50f;
-        _paddleSensitivity = newValue;
-    }
-
-    public void SetPaddleMovementRelative(bool isMovementRelative)
-    {
-        _relativePaddleMode = isMovementRelative;
     }
 
     public void Reset()

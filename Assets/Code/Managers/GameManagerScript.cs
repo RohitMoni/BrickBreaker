@@ -44,6 +44,11 @@ namespace Assets.Code
             _scoreText = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<Text>();
             _timeText = GameObject.FindGameObjectWithTag("TimeText").GetComponent<Text>();
         }
+
+        void Awake()
+        {
+            Application.targetFrameRate = 45;
+        }
 	
         // Update is called once per frame
         void Update ()
