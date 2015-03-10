@@ -26,7 +26,7 @@ public class InnerRingScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
 	{
-	    _timer += Time.deltaTime;
+	    _timer += Time.smoothDeltaTime;
 	    if (_timer > FlickerTime)
 	    {
 	        _timer = 0;

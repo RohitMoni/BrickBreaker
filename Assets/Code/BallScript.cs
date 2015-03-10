@@ -39,8 +39,6 @@ namespace Assets.Code
 
         public void OnCollisionEnter2D(Collision2D collision2D)
         {
-            Debug.Log("collided!");
-
             if (collision2D.gameObject.tag == "OuterRing")
             {
                 // Destroy ball

@@ -1,4 +1,5 @@
-﻿using Assets.Code;
+﻿using System;
+using Assets.Code;
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
@@ -8,7 +9,8 @@ public class EventTextScript : MonoBehaviour {
     /* Properties */
     private bool _eventEnabled;
     private float _timeToStop;
-    private float _timerCurrentTime;
+    private float _timerFlashTime;
+    private float _timerTotalTime;
     private int _flashDirection;
 
     /* References */
@@ -18,8 +20,8 @@ public class EventTextScript : MonoBehaviour {
 
     /* Constants */
     private const float FlashTimeCycle = 1.0f/2f;
-    private const float Threshold = 0.1f;
-    private const float PanelMaxAlpha = 255/255f;
+    private const float FlashTimeHold = 0.5f;
+    private const float PanelMaxAlpha = 200/255f;
     private const float TextMaxAlpha = 255/255f;
 
 	// Use this for initialization
@@ -41,31 +43,30 @@ public class EventTextScript : MonoBehaviour {
 	    if (_gameManager.IsPaused || !_eventEnabled)
 	        return;
 
-        // Update timer
-	    _timerCurrentTime += Time.deltaTime;
-
         // Update flash direction
-	    if (_timerCurrentTime >= FlashTimeCycle)
+	    if (_timerFlashTime >= FlashTimeCycle + FlashTimeHold || _timerFlashTime < 0)
 	    {
 	        _flashDirection = -1*_flashDirection;
-	        _timerCurrentTime = 0;
 	    }
 
-	    // Check to see if we stop the event
-	    if (_timeToStop != 0 && _timerCurrentTime > _timeToStop)
-	        StopEvent();
+        // Update timer
+        _timerFlashTime += _flashDirection * Time.smoothDeltaTime;
+        _timerTotalTime += Time.smoothDeltaTime;
 
         // Continue flashing
-	    var flashFactor = (_flashDirection*(Time.deltaTime/(FlashTimeCycle)));
+	    var flashFactor = Math.Min(1, (_timerFlashTime/(FlashTimeCycle)));
 
 	    var newColour = _backPanel.color;
-	    newColour.a += PanelMaxAlpha * flashFactor;
+	    newColour.a = PanelMaxAlpha * flashFactor;
         _backPanel.color = newColour;
 
 	    newColour = _eventText.color;
-	    newColour.a += TextMaxAlpha * flashFactor;
+	    newColour.a = TextMaxAlpha * flashFactor;
 	    _eventText.color = newColour;
 
+        // Check to see if we stop the event
+        if (_timeToStop != 0 && _timerTotalTime > _timeToStop)
+            StopEvent();
 	}
 
     public void CreateEvent(string textToDisplay, float timeTillStop =0)
@@ -103,7 +104,7 @@ public class EventTextScript : MonoBehaviour {
     private void Reset()
     {
         _timeToStop = 0;
-        _timerCurrentTime = 0;
+        _timerFlashTime = 0;
         _flashDirection = 1;
         _eventEnabled = false;
 

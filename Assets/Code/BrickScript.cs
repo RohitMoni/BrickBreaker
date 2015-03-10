@@ -43,8 +43,6 @@ namespace Assets.Code
         {
             if (collision2D.gameObject.tag == "Ball")
             {
-                Debug.Log("Brick Destroyed!");
-
                 CurrentHealth--;
 
                 switch (CurrentHealth)

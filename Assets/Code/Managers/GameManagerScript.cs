@@ -81,7 +81,7 @@ namespace Assets.Code
             // Update time
             if (TimerStarted)
             {
-                _timer += Time.deltaTime;
+                _timer += Time.smoothDeltaTime;
                 var minutes = Mathf.Floor(_timer/60);
                 var seconds = (_timer%60);
                 _timeText.text = minutes.ToString("00") + ":" + seconds.ToString("00");

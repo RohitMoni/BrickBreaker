@@ -61,7 +61,7 @@ public class MainMenuManagerScript : MonoBehaviour {
         if (_cameraIsShifting)
 	    {
 	        // Update timer
-            _timer += Time.deltaTime;
+            _timer += Time.smoothDeltaTime;
 	        _timer = Math.Min(_timer, CameraShiftTime);
 
             // shift here

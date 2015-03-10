@@ -127,7 +127,7 @@ public class PaddleManagerScript : MonoBehaviour
         ball.GetComponent<CircleCollider2D>().enabled = false;
 
         // Create initial event text
-        _eventManager.CreateEvent("Tap Twice", 3);
+        _eventManager.CreateEvent("Tap Twice");
     }
 
     public void LaunchBalls()
