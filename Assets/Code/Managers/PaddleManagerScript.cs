@@ -29,7 +29,6 @@ public class PaddleManagerScript : MonoBehaviour
     private EventTextScript _eventManager;
 
     /* Constants */
-
     private const float DefaultPaddleSensitivity = 0.1f;
 
     // Use this for initialization
@@ -162,7 +161,7 @@ public class PaddleManagerScript : MonoBehaviour
         if (_eventManager.GetCurrentEventText() == "Tap Twice")
         {
             _eventManager.StopEvent();
-            _gameManager.IsStarted = true;
+            _gameManager.TimerStarted = true;
         }
     }
 

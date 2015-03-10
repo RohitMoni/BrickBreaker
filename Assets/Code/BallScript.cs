@@ -34,7 +34,7 @@ namespace Assets.Code
 
         public void ApplyVelocity(Vector3 newDirection)
         {
-            Velocity = newDirection * _gameManager.GameSpeed;
+            Velocity = newDirection * GameVariablesScript.BallSpeed;
         }
 
         public void OnCollisionEnter2D(Collision2D collision2D)

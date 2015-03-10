@@ -12,39 +12,35 @@ namespace Assets.Code
         private int _currentState; // -1 = loss, 0 = playing, 1 = won
         public bool IsPaused;
         public bool IsStarted;
+        public bool TimerStarted;
 
-        public float GameSpeed;
         private int _textPointScore;
         private int _actualPointScore;
         private float _timer;
 
         /* References */
-        private MenuManagerScript   _menuManager;
         private PaddleManagerScript _paddleManager;
         private BrickManagerScript  _brickManager;
-        private EventTextScript     _eventManager;
+        private GameObject          _inGameMenu;
         private Text _scoreText;
         private Text _timeText;
 
         /* Constants */
-        private const float DefaultGameSpeed = 0.03f;
-        public static float GameSpeedFactor = 1.0f;
-
         public const int BonusPointScore = 50;
 
         // Use this for initialization
         void Start ()
         {
-            GameSpeed = DefaultGameSpeed;
             IsPaused = true;
+            IsStarted = false;
+            TimerStarted = false;
             _currentState = 0;
             _textPointScore = _actualPointScore = 0;
             _timer = 0;
 
-            _menuManager = GetComponent<MenuManagerScript>();
             _paddleManager = GetComponent<PaddleManagerScript>();
             _brickManager = GetComponent<BrickManagerScript>();
-            _eventManager = GameObject.FindGameObjectWithTag("EventText").GetComponent<EventTextScript>();
+            _inGameMenu = GameObject.FindGameObjectWithTag("InGameMenu");
             _scoreText = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<Text>();
             _timeText = GameObject.FindGameObjectWithTag("TimeText").GetComponent<Text>();
         }
@@ -52,6 +48,9 @@ namespace Assets.Code
         // Update is called once per frame
         void Update ()
         {
+            if (!IsStarted)
+                StartGame();
+
             switch (_currentState)
             {
                 case -1:    // Switch to lost screen
@@ -75,7 +74,7 @@ namespace Assets.Code
             _scoreText.text = _textPointScore.ToString();
 
             // Update time
-            if (IsStarted)
+            if (TimerStarted)
             {
                 _timer += Time.deltaTime;
                 var minutes = Mathf.Floor(_timer/60);
@@ -89,46 +88,34 @@ namespace Assets.Code
             _actualPointScore += scoreToAdd;
         }
 
-        public void SetGameSpeed(float sliderValue)
-        {
-            GameSpeed = sliderValue / 100f;
-            GameSpeedFactor = GameSpeed/DefaultGameSpeed;
-        }
-
         public void StartGame()
         {
             ResetGame();
-            _paddleManager.Reset();
             _paddleManager.CreateNewBall();
             _brickManager.StartUp();
-            IsPaused = false;
-            IsStarted = false;
 
-            // Move from start menu to ingame
-            _menuManager.StartMenuToGame();
-
-            _currentState = 0;
+            IsStarted = true;   // To make sure we don't run this over and over again
         }
 
         public void StopGame()
         {
+            GameVariablesScript.LastPointScore = _actualPointScore;
+
             ResetGame();
 
             // Disable the ingame menu and enable the start menu
-            _menuManager.GameToStartMenu();
-
-            _currentState = 0;
+            Application.LoadLevel("MainMenuScene");
         }
 
         public void TogglePause()
         {
             IsPaused = !IsPaused;
-            _menuManager.SetInGameMenuActive(IsPaused);
+            SetInGameMenuActive(IsPaused);
         }
 
-        public void QuitGame()
+        private void SetInGameMenuActive(bool active)
         {
-            Application.Quit();
+            _inGameMenu.SetActive(active);
         }
 
         private void ResetGame()
@@ -137,7 +124,11 @@ namespace Assets.Code
 
             _paddleManager.Reset();
             _brickManager.CleanUp();
-            IsPaused = true;
+            IsPaused = false;
+            TimerStarted = false;
+            _currentState = 0;
+
+            SetInGameMenuActive(false);
         }
 
         public void SetWinLossState(bool state)
