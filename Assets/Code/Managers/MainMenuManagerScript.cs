@@ -133,6 +133,13 @@ public class MainMenuManagerScript : MonoBehaviour {
     public void SetRelativePaddle(bool value)
     {
         GameVariablesScript.RelativePaddle = value;
+        _sensitivitySlider.interactable = value;
+
+        var colour = (value ? new Color(1, 1, 1, 1) : new Color(100f / 256f, 100 / 256f, 100f / 256f, 1));
+
+        _sensitivitySlider.transform.GetChild(0).GetComponent<Image>().color = colour;
+        _sensitivitySlider.transform.GetChild(1).GetChild(0).GetComponent<Image>().color = colour;
+        _sensitivitySlider.transform.GetChild(3).GetComponent<Text>().color = colour;
     }
 
     public void SetSensitivity(float value)
