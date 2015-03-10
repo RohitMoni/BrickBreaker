@@ -26,7 +26,7 @@ namespace Assets.Code
 
         private const float ScaleUpSpeed = 0.02f;
 
-        private const float RingRotationSpeed = 0.1f;
+        private const float RingRotationSpeed = 0.2f;
 
         // Use this for initialization
         void Start ()
