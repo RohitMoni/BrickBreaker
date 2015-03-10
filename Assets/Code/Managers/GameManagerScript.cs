@@ -17,16 +17,21 @@ namespace Assets.Code
         private int _textPointScore;
         private int _actualPointScore;
         private float _timer;
+        private float _speedIncreaseTimer;
+        private bool _eventCreated;
 
         /* References */
         private PaddleManagerScript _paddleManager;
         private BrickManagerScript  _brickManager;
-        private GameObject          _inGameMenu;
+        private EventTextScript _eventManager;
+        private GameObject _inGameMenu;
         private Text _scoreText;
         private Text _timeText;
 
         /* Constants */
-        public const int BonusPointScore = 50;
+        public const int BonusPointScore = 200;
+        public const float TimeForSpeedIncrease = 45;
+        public const float TimeForSpInEvent = 2.5f;
 
         // Use this for initialization
         void Start ()
@@ -37,9 +42,12 @@ namespace Assets.Code
             _currentState = 0;
             _textPointScore = _actualPointScore = 0;
             _timer = 0;
+            _speedIncreaseTimer = 0;
+            _eventCreated = false;
 
             _paddleManager = GetComponent<PaddleManagerScript>();
             _brickManager = GetComponent<BrickManagerScript>();
+            _eventManager = GameObject.FindGameObjectWithTag("EventText").GetComponent<EventTextScript>();
             _inGameMenu = GameObject.FindGameObjectWithTag("InGameMenu");
             _scoreText = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<Text>();
             _timeText = GameObject.FindGameObjectWithTag("TimeText").GetComponent<Text>();
@@ -85,12 +93,33 @@ namespace Assets.Code
                 var minutes = Mathf.Floor(_timer/60);
                 var seconds = (_timer%60);
                 _timeText.text = minutes.ToString("00") + ":" + seconds.ToString("00");
+
+                // Update the timer that increases ball speed
+                _speedIncreaseTimer += Time.smoothDeltaTime;
+                if (!_eventCreated && _speedIncreaseTimer > TimeForSpeedIncrease - TimeForSpInEvent)
+                {
+                    _eventManager.CreateEvent("Speed++", TimeForSpInEvent);
+                    _eventCreated = true;
+                }
+                else if (_speedIncreaseTimer >= TimeForSpeedIncrease)
+                {
+                    IncreaseBallSpeed();
+                    _speedIncreaseTimer = 0;
+                    _eventCreated = false;
+                }
             }
         }
 
         public void AddScore(int scoreToAdd)
         {
             _actualPointScore += scoreToAdd;
+        }
+
+        public void IncreaseBallSpeed()
+        {
+            var currentSpeed = GameVariablesScript.BallSpeed*GameVariablesScript.BallSpeedCoeff;
+            currentSpeed++;
+            GameVariablesScript.BallSpeed = currentSpeed / GameVariablesScript.BallSpeedCoeff;
         }
 
         public void StartGame()
