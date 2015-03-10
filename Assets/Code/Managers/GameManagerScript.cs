@@ -99,9 +99,14 @@ namespace Assets.Code
 
         public void StopGame()
         {
-            GameVariablesScript.LastPointScore = _actualPointScore;
+            GameVariablesScript.LastScore = _actualPointScore;
+            if (_actualPointScore > GameVariablesScript.HighScore)
+                GameVariablesScript.HighScore = _actualPointScore;
 
             ResetGame();
+
+            // Make the main menu scene load up the score screen first
+            GameVariablesScript.ScreenToStartOn = 2;
 
             // Disable the ingame menu and enable the start menu
             Application.LoadLevel("MainMenuScene");

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Net.Mime;
 using System.Timers;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainMenuManagerScript : MonoBehaviour {
 
@@ -9,11 +11,14 @@ public class MainMenuManagerScript : MonoBehaviour {
 
     private float _timer;
     private bool _cameraIsShifting;
-    private int _cameraShiftingTo;  // 0 = Start, 1 = Options
+    private int _cameraShiftingTo;  // 0 = Start, 1 = Options, 2 = Score screen
     private Vector3 _shiftStartPosition;
 
     /* References */
     private Camera _camera;
+
+    private Text _lastScoreText;
+    private Text _highScoreText;
 
     /* Constants */
     private const float CameraShiftTime = 0.2f;
@@ -29,6 +34,14 @@ public class MainMenuManagerScript : MonoBehaviour {
         _shiftStartPosition = new Vector3(0, 0, -10);
 
 	    _camera = Camera.main;
+	    _lastScoreText = GameObject.FindGameObjectWithTag("LastScoreText").GetComponent<Text>();
+        _highScoreText = GameObject.FindGameObjectWithTag("HighScoreText").GetComponent<Text>();
+
+	    _highScoreText.text = GameVariablesScript.HighScore.ToString();
+	    _lastScoreText.text = GameVariablesScript.LastScore.ToString();
+
+        _shiftStartPosition = new Vector3(GameVariablesScript.ScreenToStartOn * 1080, 0, -10);
+	    _camera.transform.position = _shiftStartPosition;
 	}
 	
 	// Update is called once per frame
@@ -58,34 +71,34 @@ public class MainMenuManagerScript : MonoBehaviour {
         #endregion
 
         #region Swiping
-        else
-        {
-            foreach (var touch in Input.touches)
-            {
-                if (touch.phase == TouchPhase.Moved && !IsUsingSlider)
-                {
-                    _camera.transform.position -= new Vector3(touch.deltaPosition.x, 0, 0);
-                }
-                else
-                {
-                    switch (_cameraShiftingTo)
-                    {
-                        case 0:
-                            if (_camera.transform.position.x >= 100)
-                                StartMenuToOptions();
-                            else
-                                OptionsToStartMenu();
-                            break;
-                        case 1:
-                            if (_camera.transform.position.x <= 980)
-                                OptionsToStartMenu();
-                            else
-                                StartMenuToOptions();
-                            break;
-                    }
-                }
-            }
-        }
+        //else
+        //{
+        //    foreach (var touch in Input.touches)
+        //    {
+        //        if (touch.phase == TouchPhase.Moved && !IsUsingSlider)
+        //        {
+        //            _camera.transform.position -= new Vector3(touch.deltaPosition.x, 0, 0);
+        //        }
+        //        else
+        //        {
+        //            switch (_cameraShiftingTo)
+        //            {
+        //                case 0:
+        //                    if (_camera.transform.position.x >= 100)
+        //                        ShiftToScreen(1);
+        //                    else
+        //                        ShiftToScreen(0);
+        //                    break;
+        //                case 1:
+        //                    if (_camera.transform.position.x <= 980)
+        //                        ShiftToScreen(0);
+        //                    else
+        //                        ShiftToScreen(1);
+        //                    break;
+        //            }
+        //        }
+        //    }
+        //}
         #endregion
     }
 
@@ -94,17 +107,10 @@ public class MainMenuManagerScript : MonoBehaviour {
         Application.LoadLevel("GameScene");
     }
 
-    public void StartMenuToOptions()
+    public void ShiftToScreen(int screenNumber)
     {
         _shiftStartPosition = _camera.transform.position;
-        _cameraShiftingTo = 1;
-        _cameraIsShifting = true;
-    }
-
-    public void OptionsToStartMenu()
-    {
-        _shiftStartPosition = _camera.transform.position;
-        _cameraShiftingTo = 0;
+        _cameraShiftingTo = screenNumber;
         _cameraIsShifting = true;
     }
 
@@ -113,6 +119,8 @@ public class MainMenuManagerScript : MonoBehaviour {
         Application.Quit();
     }
 
+
+    #region Settings
     public void SetRelativePaddle(bool value)
     {
         GameVariablesScript.RelativePaddle = value;
@@ -127,4 +135,5 @@ public class MainMenuManagerScript : MonoBehaviour {
     {
         GameVariablesScript.BallSpeed = value / GameVariablesScript.BallSpeedCoeff;
     }
+    #endregion
 }
