@@ -12,6 +12,8 @@ public class PaddleManagerScript : MonoBehaviour
 #if UNITY_EDITOR
     private float _paddleSpeed;
 #endif
+    private int _controlFingerId;
+    private Quaternion _currentSliderMovement;
     
     /* References */
     // Managers
@@ -36,6 +38,9 @@ public class PaddleManagerScript : MonoBehaviour
         _eventManager = GameObject.FindGameObjectWithTag("EventText").GetComponent<EventTextScript>();
         _controlSlider = GameObject.FindGameObjectWithTag("ControlSlider").GetComponent<Slider>();
         _camera = Camera.main;
+
+        _controlFingerId = -1;
+        _currentSliderMovement = Quaternion.identity;
 
 #if UNITY_EDITOR
         _paddleSpeed = 1.0f;
@@ -73,6 +78,9 @@ public class PaddleManagerScript : MonoBehaviour
 
             if (!GameVariablesScript.SliderMovement)
                 NonSliderMovement();
+            else
+                if (GameVariablesScript.RelativePaddle)
+                    _paddleAnchor.transform.rotation = _paddleAnchor.transform.rotation * _currentSliderMovement;
 #endif
         }
     }
@@ -117,13 +125,39 @@ public class PaddleManagerScript : MonoBehaviour
 
     public void SliderMovement(float sliderValue)
     {
-        if (GameVariablesScript.RelativePaddle)
+        if (!GameVariablesScript.RelativePaddle)
         {
             _paddleAnchor.transform.eulerAngles = new Vector3(0, 0, sliderValue-180);
         }
         else
         {
-            
+            // Reset slider if the user stops touching it
+            foreach (var touch in Input.touches)
+            {
+                // Set the current finger used to this finger if not available
+                _controlFingerId = touch.fingerId;
+
+                // If we're tracking the right finger
+                if (touch.fingerId == _controlFingerId)
+                {
+                    if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
+                    {
+                        // End finger
+                        _controlFingerId = -1;
+                        _controlSlider.value = 180;
+                        _currentSliderMovement = Quaternion.identity;
+                    }
+                    else
+                    {
+                        var valueDifference = sliderValue - 180;
+
+                        var angleDifference = valueDifference * GameVariablesScript.Sensitivity;
+
+                        _currentSliderMovement = new Quaternion { eulerAngles = new Vector3(0, 0, angleDifference) };
+
+                    }
+                }
+            }
         }
     }
 
@@ -183,6 +217,8 @@ public class PaddleManagerScript : MonoBehaviour
     public void Reset()
     {
         _controlSlider.value = 180;
+        _controlFingerId = -1;
+        _currentSliderMovement = Quaternion.identity;
 
         _paddleAnchor.transform.rotation = Quaternion.identity;
 

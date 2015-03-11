@@ -11,7 +11,7 @@ public class GameVariablesScript : MonoBehaviour {
 
     /* Game Properties */
     public static float BallSpeedCoeff = 100f;
-    public static float PaddleSensitivityCoeff = 10f;
+    public static float PaddleSensitivityCoeff = 50f;
 
     public static bool RelativePaddle = DefaultRelativePaddle;
     public static bool SliderMovement = DefaultSliderMovement;
