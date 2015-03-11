@@ -25,6 +25,7 @@ public class PaddleManagerScript : MonoBehaviour
     public  GameObject BallPrefab;
     private Camera _camera;
     private EventTextScript _eventManager;
+    private Slider _controlSlider;
 
     // Use this for initialization
     void Start()
@@ -33,6 +34,7 @@ public class PaddleManagerScript : MonoBehaviour
         _gameAnchor = GameObject.FindGameObjectWithTag("GameAnchor");
         _paddleAnchor = GameObject.FindGameObjectWithTag("PaddleAnchor");
         _eventManager = GameObject.FindGameObjectWithTag("EventText").GetComponent<EventTextScript>();
+        _controlSlider = GameObject.FindGameObjectWithTag("ControlSlider").GetComponent<Slider>();
         _camera = Camera.main;
 
 #if UNITY_EDITOR
@@ -63,58 +65,14 @@ public class PaddleManagerScript : MonoBehaviour
 #if UNITY_ANDROID
             foreach (var touch in Input.touches)
             {
-                if (GameVariablesScript.RelativePaddle)
-                {
-                    // RELATIVE MOVEMENT
-                    if (touch.phase == TouchPhase.Moved)
-                    {
-                        var touchPoint = _camera.ScreenToWorldPoint(touch.position);
-                        touchPoint.z = 0;
-                        var deltaV2 = touch.deltaPosition;
-                        var delta = new Vector3(deltaV2.x, deltaV2.y, 0);
-
-                        var finalPoint = touchPoint + delta;
-
-                        var touchPointAngle = Mathf.Atan2(touchPoint.y, touchPoint.x)*Mathf.Rad2Deg + 180f;
-                        var finalPointAngle = Mathf.Atan2(finalPoint.y, finalPoint.x)*Mathf.Rad2Deg + 180f;
-
-                        var angleDifference = finalPointAngle - touchPointAngle;
-                        if (Mathf.Abs(angleDifference) > 330)
-                            // arbitrary high number that represents when the two points are in different quadrants
-                            angleDifference += (360*-Mathf.Sign(angleDifference));
-
-                        angleDifference *= GameVariablesScript.Sensitivity;
-
-                        var rotationChange = new Quaternion {eulerAngles = new Vector3(0, 0, angleDifference)};
-
-                        _paddleAnchor.transform.rotation = _paddleAnchor.transform.rotation*rotationChange;
-                    }
-                }
-                else
-                {
-                    // ABSOLUTE MOVEMENT
-                    if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)
-                    {
-                        // Ignore touches that hit the pause button
-                        if (touch.position.y > Screen.height / 10 * 9)
-                            break;
-
-                        var worldPos = _camera.ScreenToWorldPoint(touch.position);
-
-                        var angleRadians = Math.Atan2(worldPos.y, worldPos.x);
-                        var angleDegrees = angleRadians * 180.0f / Math.PI;
-
-                        angleDegrees += 90;
-
-                        _paddleAnchor.transform.eulerAngles = new Vector3(0, 0, (float)angleDegrees);
-                    }
-                }
-
                 if (touch.tapCount == 2)
                 {
                     LaunchBalls();
                 }
             }
+
+            if (!GameVariablesScript.SliderMovement)
+                NonSliderMovement();
 #endif
         }
     }
@@ -157,8 +115,75 @@ public class PaddleManagerScript : MonoBehaviour
         }
     }
 
+    public void SliderMovement(float sliderValue)
+    {
+        if (GameVariablesScript.RelativePaddle)
+        {
+            _paddleAnchor.transform.eulerAngles = new Vector3(0, 0, sliderValue-180);
+        }
+        else
+        {
+            
+        }
+    }
+
+    public void NonSliderMovement()
+    {
+        foreach (var touch in Input.touches)
+        {
+            if (GameVariablesScript.RelativePaddle)
+            {
+                // OLD RELATIVE MOVEMENT
+                if (touch.phase == TouchPhase.Moved)
+                {
+                    var touchPoint = _camera.ScreenToWorldPoint(touch.position);
+                    touchPoint.z = 0;
+                    var deltaV2 = touch.deltaPosition;
+                    var delta = new Vector3(deltaV2.x, deltaV2.y, 0);
+
+                    var finalPoint = touchPoint + delta;
+
+                    var touchPointAngle = Mathf.Atan2(touchPoint.y, touchPoint.x) * Mathf.Rad2Deg + 180f;
+                    var finalPointAngle = Mathf.Atan2(finalPoint.y, finalPoint.x) * Mathf.Rad2Deg + 180f;
+
+                    var angleDifference = finalPointAngle - touchPointAngle;
+                    if (Mathf.Abs(angleDifference) > 330)
+                        // arbitrary high number that represents when the two points are in different quadrants
+                        angleDifference += (360 * -Mathf.Sign(angleDifference));
+
+                    angleDifference *= GameVariablesScript.Sensitivity;
+
+                    var rotationChange = new Quaternion { eulerAngles = new Vector3(0, 0, angleDifference) };
+
+                    _paddleAnchor.transform.rotation = _paddleAnchor.transform.rotation * rotationChange;
+                }
+            }
+            else
+            {
+                // OLD ABSOLUTE MOVEMENT
+                if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)
+                {
+                    // Ignore touches that hit the pause button
+                    if (touch.position.y > Screen.height / 10 * 9)
+                        break;
+
+                    var worldPos = _camera.ScreenToWorldPoint(touch.position);
+
+                    var angleRadians = Math.Atan2(worldPos.y, worldPos.x);
+                    var angleDegrees = angleRadians * 180.0f / Math.PI;
+
+                    angleDegrees += 90;
+
+                    _paddleAnchor.transform.eulerAngles = new Vector3(0, 0, (float)angleDegrees);
+                }
+            }
+        }
+    }
+
     public void Reset()
     {
+        _controlSlider.value = 180;
+
         _paddleAnchor.transform.rotation = Quaternion.identity;
 
         // Remove all balls

@@ -5,6 +5,7 @@ public class GameVariablesScript : MonoBehaviour {
 
     /* Constants */
     private const bool DefaultRelativePaddle = true;
+    private const bool DefaultSliderMovement = true;
     private const int DefaultSensitivity = 5;
     private const int DefaultBallSpeed = 5;
 
@@ -13,6 +14,7 @@ public class GameVariablesScript : MonoBehaviour {
     public static float PaddleSensitivityCoeff = 10f;
 
     public static bool RelativePaddle = DefaultRelativePaddle;
+    public static bool SliderMovement = DefaultSliderMovement;
     public static float Sensitivity = DefaultSensitivity / PaddleSensitivityCoeff;
     public static float BallSpeed = DefaultBallSpeed / BallSpeedCoeff;
 
