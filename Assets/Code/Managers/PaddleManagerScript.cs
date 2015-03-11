@@ -74,6 +74,19 @@ public class PaddleManagerScript : MonoBehaviour
                 {
                     LaunchBalls();
                 }
+
+                // Reset slider if the user stops touching it
+                if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
+                {
+                    // End finger
+                    if (GameVariablesScript.RelativePaddle)
+                        _currentSliderMovement = Quaternion.identity;
+                    else
+                        _currentSliderMovement = _paddleAnchor.transform.rotation;
+
+                    _controlFingerId = -1;
+                    _controlSlider.value = 180;
+                }
             }
 
             if (!GameVariablesScript.SliderMovement)
@@ -127,35 +140,27 @@ public class PaddleManagerScript : MonoBehaviour
     {
         if (!GameVariablesScript.RelativePaddle)
         {
-            _paddleAnchor.transform.eulerAngles = new Vector3(0, 0, sliderValue-180);
+            _paddleAnchor.transform.rotation = _currentSliderMovement * new Quaternion { eulerAngles = new Vector3(0, 0, sliderValue-180)};
+
+            foreach (var touch in Input.touches)
+            {
+                _controlFingerId = touch.fingerId;
+            }
         }
         else
         {
-            // Reset slider if the user stops touching it
             foreach (var touch in Input.touches)
             {
-                // Set the current finger used to this finger if not available
                 _controlFingerId = touch.fingerId;
 
                 // If we're tracking the right finger
                 if (touch.fingerId == _controlFingerId)
                 {
-                    if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
-                    {
-                        // End finger
-                        _controlFingerId = -1;
-                        _controlSlider.value = 180;
-                        _currentSliderMovement = Quaternion.identity;
-                    }
-                    else
-                    {
-                        var valueDifference = sliderValue - 180;
+                    var valueDifference = sliderValue - 180;
 
-                        var angleDifference = valueDifference * GameVariablesScript.Sensitivity;
+                    var angleDifference = valueDifference * GameVariablesScript.Sensitivity;
 
-                        _currentSliderMovement = new Quaternion { eulerAngles = new Vector3(0, 0, angleDifference) };
-
-                    }
+                    _currentSliderMovement = new Quaternion { eulerAngles = new Vector3(0, 0, angleDifference) };
                 }
             }
         }
