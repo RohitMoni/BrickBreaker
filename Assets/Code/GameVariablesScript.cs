@@ -4,7 +4,7 @@ using System.Collections;
 public class GameVariablesScript : MonoBehaviour {
 
     /* Constants */
-    private const bool DefaultRelativePaddle = true;
+    private const bool DefaultRelativePaddle = false;
     private const bool DefaultSliderMovement = true;
     private const int DefaultSensitivity = 5;
     private const int DefaultBallSpeed = 5;

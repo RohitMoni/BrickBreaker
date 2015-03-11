@@ -25,6 +25,7 @@ namespace Assets.Code
         private BrickManagerScript  _brickManager;
         private EventTextScript _eventManager;
         private GameObject _inGameMenu;
+        private GameObject _controlSlider;
         private Text _scoreText;
         private Text _timeText;
 
@@ -49,6 +50,7 @@ namespace Assets.Code
             _brickManager = GetComponent<BrickManagerScript>();
             _eventManager = GameObject.FindGameObjectWithTag("EventText").GetComponent<EventTextScript>();
             _inGameMenu = GameObject.FindGameObjectWithTag("InGameMenu");
+            _controlSlider = GameObject.FindGameObjectWithTag("ControlSlider");
             _scoreText = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<Text>();
             _timeText = GameObject.FindGameObjectWithTag("TimeText").GetComponent<Text>();
         }
@@ -157,6 +159,11 @@ namespace Assets.Code
             _inGameMenu.SetActive(active);
         }
 
+        private void SetPaddleMovementSliderActive(bool active)
+        {
+            _controlSlider.SetActive(active);
+        }
+
         private void ResetGame()
         {
             _actualPointScore = _textPointScore = 0;
@@ -168,6 +175,7 @@ namespace Assets.Code
             _currentState = 0;
 
             SetInGameMenuActive(false);
+            SetPaddleMovementSliderActive(GameVariablesScript.SliderMovement);
         }
 
         public void SetWinLossState(bool state)

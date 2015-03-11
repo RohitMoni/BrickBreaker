@@ -20,6 +20,7 @@ public class MainMenuManagerScript : MonoBehaviour {
     private Text _lastScoreText;
     private Text _highScoreText;
     private Toggle _relativeMovementToggle;
+    private Toggle _sliderMovementToggle;
     private Slider _sensitivitySlider;
     private Slider _ballSpeedSlider;
 
@@ -40,6 +41,7 @@ public class MainMenuManagerScript : MonoBehaviour {
 	    _lastScoreText = GameObject.FindGameObjectWithTag("LastScoreText").GetComponent<Text>();
         _highScoreText = GameObject.FindGameObjectWithTag("HighScoreText").GetComponent<Text>();
         _relativeMovementToggle = GameObject.FindGameObjectWithTag("RelativeMovementToggle").GetComponent<Toggle>();
+	    _sliderMovementToggle = GameObject.FindGameObjectWithTag("SliderMovementToggle").GetComponent<Toggle>();
         _sensitivitySlider = GameObject.FindGameObjectWithTag("SensitivitySlider").GetComponent<Slider>();
         _ballSpeedSlider = GameObject.FindGameObjectWithTag("BallSpeedSlider").GetComponent<Slider>();
 
@@ -50,6 +52,7 @@ public class MainMenuManagerScript : MonoBehaviour {
         _highScoreText.text = GameVariablesScript.HighScore.ToString();
         _lastScoreText.text = GameVariablesScript.LastScore.ToString();
 	    _relativeMovementToggle.isOn = GameVariablesScript.RelativePaddle;
+	    _sliderMovementToggle.isOn = GameVariablesScript.SliderMovement;
 	    _sensitivitySlider.value = GameVariablesScript.Sensitivity*GameVariablesScript.PaddleSensitivityCoeff;
 	    _ballSpeedSlider.value = GameVariablesScript.BallSpeed*GameVariablesScript.BallSpeedCoeff;
 	}
@@ -140,6 +143,11 @@ public class MainMenuManagerScript : MonoBehaviour {
         _sensitivitySlider.transform.GetChild(0).GetComponent<Image>().color = colour;
         _sensitivitySlider.transform.GetChild(1).GetChild(0).GetComponent<Image>().color = colour;
         _sensitivitySlider.transform.GetChild(3).GetComponent<Text>().color = colour;
+    }
+
+    public void SetSliderMovement(bool value)
+    {
+        GameVariablesScript.SliderMovement = value;
     }
 
     public void SetSensitivity(float value)
