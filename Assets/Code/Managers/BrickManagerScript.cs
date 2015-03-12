@@ -16,7 +16,6 @@ namespace Assets.Code
 
         /* Properties */
         private List<BrickRing> _brickRings;
-        private List<BrickRing> _inActiveBrickRings; 
 
         private bool _brickPause;
 
@@ -36,7 +35,6 @@ namespace Assets.Code
             _gameManager = GetComponent<GameManagerScript>();
             _brickAnchor = GameObject.FindGameObjectWithTag("BrickAnchor");
             _brickRings = new List<BrickRing>();
-            _inActiveBrickRings = new List<BrickRing>();
         }
 	
         // Update is called once per frame
@@ -92,22 +90,11 @@ namespace Assets.Code
 
                 if (count == 0) // If there are no active children, we shuffle the ring into the inactive pile
                 {
-                    _inActiveBrickRings.Add(ring);
                     _brickRings.RemoveAt(i);
 
-                    // Check to see if there are the requisite number of brick rings
-                    if (_brickRings.Count < NumberOfRings)
-                    {
-                        // If not, take an equivalent number of brick rings from the inactive pool and shift them back in
-                        for (var j = 0; j < NumberOfRings - _brickRings.Count; j++)
-                        {
-                            var sring = _inActiveBrickRings[0];
-                            ResetBrickRing(sring);
-
-                            _brickRings.Add(sring);
-                            _inActiveBrickRings.RemoveAt(0);
-                        }
-                    }
+                    ResetBrickRing(ring);
+                    
+                    _brickRings.Add(ring);
                 }
             }
         }
