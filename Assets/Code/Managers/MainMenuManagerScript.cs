@@ -18,7 +18,7 @@ public class MainMenuManagerScript : MonoBehaviour {
     private Camera _camera;
 
     private Text _lastScoreText;
-    private Text _highScoreText;
+    private GameObject[] _highScoreText;
     private Toggle _relativeMovementToggle;
     private Toggle _sliderMovementToggle;
     private Slider _sensitivitySlider;
@@ -39,7 +39,7 @@ public class MainMenuManagerScript : MonoBehaviour {
 
 	    _camera = Camera.main;
 	    _lastScoreText = GameObject.FindGameObjectWithTag("LastScoreText").GetComponent<Text>();
-        _highScoreText = GameObject.FindGameObjectWithTag("HighScoreText").GetComponent<Text>();
+	    _highScoreText = GameObject.FindGameObjectsWithTag("HighScoreText");
         _relativeMovementToggle = GameObject.FindGameObjectWithTag("RelativeMovementToggle").GetComponent<Toggle>();
 	    _sliderMovementToggle = GameObject.FindGameObjectWithTag("SliderMovementToggle").GetComponent<Toggle>();
         _sensitivitySlider = GameObject.FindGameObjectWithTag("SensitivitySlider").GetComponent<Slider>();
@@ -49,7 +49,8 @@ public class MainMenuManagerScript : MonoBehaviour {
 	    _camera.transform.position = _shiftStartPosition;
 
         // Setting ui elements from game variables
-        _highScoreText.text = GameVariablesScript.HighScore.ToString();
+        foreach (var highScoreTextObj in _highScoreText)
+            highScoreTextObj.GetComponent<Text>().text = GameVariablesScript.HighScore.ToString();
         _lastScoreText.text = GameVariablesScript.LastScore.ToString();
 	    _relativeMovementToggle.isOn = GameVariablesScript.RelativePaddle;
 	    _sliderMovementToggle.isOn = GameVariablesScript.SliderMovement;
