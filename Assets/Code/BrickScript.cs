@@ -26,17 +26,12 @@ namespace Assets.Code
             HealthTotal = 1;
             CurrentHealth = 1;
             GetComponent<SpriteRenderer>().sprite = BrickHealth0;
-            //GetComponent<BoxCollider2D>().enabled = false;
         }
 
-        public void Initialise()
+        private void Reset()
         {
-            //GetComponent<BoxCollider2D>().enabled = true;            
-        }
-	
-        // Update is called once per frame
-        void Update () {
-	
+            CurrentHealth = 1;
+            GetComponent<SpriteRenderer>().sprite = BrickHealth0;
         }
 
         public void OnCollisionEnter2D(Collision2D collision2D)
@@ -74,21 +69,9 @@ namespace Assets.Code
                         // Add points
                         _gameManager.AddScore(PointValue);
 
-                        // Destroy brick
-                        Destroy(gameObject);
-
-                        // Check for win condition
-                        var remainingBricks = GameObject.FindGameObjectsWithTag("Brick");
-                        var won = true;
-                        foreach (var brick in remainingBricks)
-                        {
-                            if (brick != gameObject)
-                                won = false;
-                        }
-
-                        if (won)
-                            _gameManager.SetWinLossState(true);
-
+                        // Reset and 'Destroy' brick
+                        Reset();
+                        gameObject.SetActive(false);
                         break;
                 }
             }

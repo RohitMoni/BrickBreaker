@@ -10,7 +10,7 @@ public class GameVariablesScript : MonoBehaviour {
     private const int DefaultBallSpeed = 5;
 
     /* Game Properties */
-    public static float BallSpeedCoeff = 100f;
+    public static float BallSpeedCoeff = 200f;
     public static float PaddleSensitivityCoeff = 50f;
 
     public static bool RelativePaddle = DefaultRelativePaddle;

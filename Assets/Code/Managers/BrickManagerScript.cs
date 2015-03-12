@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using UnityEngine;
 
@@ -15,6 +16,7 @@ namespace Assets.Code
 
         /* Properties */
         private List<BrickRing> _brickRings;
+        private List<BrickRing> _inActiveBrickRings; 
 
         private bool _brickPause;
 
@@ -34,6 +36,7 @@ namespace Assets.Code
             _gameManager = GetComponent<GameManagerScript>();
             _brickAnchor = GameObject.FindGameObjectWithTag("BrickAnchor");
             _brickRings = new List<BrickRing>();
+            _inActiveBrickRings = new List<BrickRing>();
         }
 	
         // Update is called once per frame
@@ -45,7 +48,7 @@ namespace Assets.Code
                 var ring = _brickRings[0];
 
                 foreach (Transform brick in ring.Anchor.transform)
-                    Destroy(brick.gameObject);
+                    brick.gameObject.SetActive(false);
             }
 #endif
             if (_gameManager.IsPaused || _brickPause)
@@ -56,9 +59,15 @@ namespace Assets.Code
             // Check to see if there are the requisite number of brick rings
             if (_brickRings.Count < NumberOfRings)
             {
-                // If not, spawn an equivalent number of brick rings
+                // If not, take an equivalent number of brick rings from the inactive pool and shift them back in
                 for (var i = 0; i < NumberOfRings - _brickRings.Count; i++)
-                    CreateNewBrickRing();
+                {
+                    var ring = _inActiveBrickRings[0];
+                    ResetBrickRing(ring);
+
+                    _brickRings.Add(ring);
+                    _inActiveBrickRings.RemoveAt(0);
+                }
             }
             
             // Update each brick ring
@@ -93,15 +102,12 @@ namespace Assets.Code
             {
                 var ring = _brickRings[i];
 
-                var count = ring.Anchor.transform.childCount;
+                var count = ring.Anchor.transform.Cast<Transform>().Count(child => child.gameObject.activeSelf);
 
-                if (count == 0)
+                if (count == 0) // If there are no active children, we shuffle the ring into the inactive pile
                 {
-                    Destroy(ring.Anchor);
+                    _inActiveBrickRings.Add(ring);
                     _brickRings.RemoveAt(i);
-
-                    if (i == 0)
-                        _brickPause = false;
                 }
             }
         }
@@ -123,8 +129,8 @@ namespace Assets.Code
 
         public void StartUp()
         {
-            // Create new ones
-            CreateNewBrickRing();
+            for (var i = 0; i < NumberOfRings; i++)
+                CreateNewBrickRing();
         }
 
         void CreateNewBrickRing()
@@ -136,6 +142,17 @@ namespace Assets.Code
             anchor.transform.parent = _brickAnchor.transform;
 
             _brickRings.Add(gO);
+        }
+
+        void ResetBrickRing(BrickRing ring)
+        {
+            var anchor = ring.Anchor;
+            anchor.transform.position = new Vector3(0, 0, -2);
+            anchor.transform.localScale = new Vector3(InitialScale, InitialScale, InitialScale);
+            anchor.transform.parent = _brickAnchor.transform;
+
+            foreach (Transform child in anchor.transform)
+                child.gameObject.SetActive(true);
         }
 
         public class BrickRing
@@ -152,8 +169,6 @@ namespace Assets.Code
                 for (var i = 0; i < numberOfBricks; i++)
                 {
                     var newBrick = Instantiate(brickPrefab, Vector3.zero, Quaternion.identity) as GameObject;
-
-                    newBrick.GetComponent<BrickScript>().Initialise();
 
                     newBrick.transform.parent = Anchor.transform;
                     newBrick.transform.localEulerAngles = new Vector3(0, 0, 360.0f / numberOfBricks * i);
