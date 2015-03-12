@@ -17,10 +17,12 @@ namespace Assets.Code
 
         // Managers
         private GameManagerScript _gameManager;
+        private BrickManagerScript _brickManager;
 
         // Use this for initialization
         void Start () {
             _gameManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<GameManagerScript>();
+            _brickManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<BrickManagerScript>();
             _brickDestroyEffect = GameObject.FindGameObjectWithTag("ParticleBrickDestroy");
             PointValue = 50;
             HealthTotal = 1;
@@ -72,6 +74,7 @@ namespace Assets.Code
                         // Reset and 'Destroy' brick
                         Reset();
                         gameObject.SetActive(false);
+                        _brickManager.CheckRings();
                         break;
                 }
             }

@@ -49,27 +49,13 @@ namespace Assets.Code
 
                 foreach (Transform brick in ring.Anchor.transform)
                     brick.gameObject.SetActive(false);
+
+                CheckRings();
             }
 #endif
             if (_gameManager.IsPaused || _brickPause)
                 return;
 
-            CheckRings();
-
-            // Check to see if there are the requisite number of brick rings
-            if (_brickRings.Count < NumberOfRings)
-            {
-                // If not, take an equivalent number of brick rings from the inactive pool and shift them back in
-                for (var i = 0; i < NumberOfRings - _brickRings.Count; i++)
-                {
-                    var ring = _inActiveBrickRings[0];
-                    ResetBrickRing(ring);
-
-                    _brickRings.Add(ring);
-                    _inActiveBrickRings.RemoveAt(0);
-                }
-            }
-            
             // Update each brick ring
             var ringRotation = 1;
             for (var i = 0; i < _brickRings.Count; i++)
@@ -108,6 +94,20 @@ namespace Assets.Code
                 {
                     _inActiveBrickRings.Add(ring);
                     _brickRings.RemoveAt(i);
+
+                    // Check to see if there are the requisite number of brick rings
+                    if (_brickRings.Count < NumberOfRings)
+                    {
+                        // If not, take an equivalent number of brick rings from the inactive pool and shift them back in
+                        for (var j = 0; j < NumberOfRings - _brickRings.Count; j++)
+                        {
+                            var sring = _inActiveBrickRings[0];
+                            ResetBrickRing(sring);
+
+                            _brickRings.Add(sring);
+                            _inActiveBrickRings.RemoveAt(0);
+                        }
+                    }
                 }
             }
         }
