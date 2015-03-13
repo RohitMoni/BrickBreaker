@@ -21,6 +21,10 @@ namespace Assets.Code
         private float _speedIncreaseTimer;
         private bool _eventCreated;
 
+        // Combo variables
+        private float _comboValue;
+        private float _comboTimer;
+
         // Camera shake variables
         private Vector3 _cameraOriginalPosition;
         private float _radius;
@@ -37,11 +41,15 @@ namespace Assets.Code
         private GameObject _controlSlider;
         private Text _scoreText;
         private Text _timeText;
+        private Text _comboText;
 
         /* Constants */
         public const int BonusPointScore = 200;
-        public const float TimeForSpeedIncrease = 45;
-        public const float TimeForSpInEvent = 2.5f;
+        public const float TimeForSpeedIncrease = 30;
+        public const float TimeForSpeedIncreaseEvent = 2.5f;
+        public const float TimeForComboTextShow = 1f;
+        public Vector3 ComboTextInitialScale = new Vector3(.5f, .5f, .5f);
+        public Vector3 ComboTextFinalScale = new Vector3(1f, 1f, 1f);
 
         // Use this for initialization
         void Start ()
@@ -54,6 +62,7 @@ namespace Assets.Code
             _timer = 0;
             _speedIncreaseTimer = 0;
             _eventCreated = false;
+            _comboTimer = 0;
 
             // Camera shake
             _camera = Camera.main;
@@ -65,6 +74,9 @@ namespace Assets.Code
             _controlSlider = GameObject.FindGameObjectWithTag("ControlSlider");
             _scoreText = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<Text>();
             _timeText = GameObject.FindGameObjectWithTag("TimeText").GetComponent<Text>();
+            _comboText = GameObject.FindGameObjectWithTag("ComboText").GetComponent<Text>();
+
+            _comboText.enabled = false;
         }
 
         void Awake()
@@ -78,12 +90,20 @@ namespace Assets.Code
             if (!IsStarted)
                 StartGame();
 
+            #region Editor only
 #if UNITY_EDITOR
             if (Input.GetKeyUp(KeyCode.Return))
             {
                 StartShake();
             }
+
+            if (Input.GetKeyUp(KeyCode.Escape) && !IsPaused)
+            {
+                TogglePause();
+            }
 #endif
+            #endregion
+
             switch (_currentState)
             {
                 case -1:    // Switch to lost screen
@@ -92,11 +112,6 @@ namespace Assets.Code
                 case 1:     // Switch to won screen
                     StopGame();
                     break;
-            }
-
-            if (Input.GetKeyUp(KeyCode.Escape) && !IsPaused)
-            {
-                TogglePause();
             }
 
             if (IsPaused)
@@ -109,16 +124,19 @@ namespace Assets.Code
             // Update time
             if (TimerStarted)
             {
+                #region Timer Text
                 _timer += Time.smoothDeltaTime;
                 var minutes = Mathf.Floor(_timer/60);
                 var seconds = (_timer%60);
                 _timeText.text = minutes.ToString("00") + ":" + seconds.ToString("00");
+                #endregion
 
+                #region Ball Speed Increase
                 // Update the timer that increases ball speed
                 _speedIncreaseTimer += Time.smoothDeltaTime;
-                if (!_eventCreated && _speedIncreaseTimer > TimeForSpeedIncrease - TimeForSpInEvent)
+                if (!_eventCreated && _speedIncreaseTimer > TimeForSpeedIncrease - TimeForSpeedIncreaseEvent)
                 {
-                    _eventManager.CreateEvent("Speed++", TimeForSpInEvent);
+                    _eventManager.CreateEvent("Speed++", TimeForSpeedIncreaseEvent);
                     _eventCreated = true;
                 }
                 else if (_speedIncreaseTimer >= TimeForSpeedIncrease)
@@ -127,10 +145,34 @@ namespace Assets.Code
                     _speedIncreaseTimer = 0;
                     _eventCreated = false;
                 }
+                #endregion
             }
 
+            #region Camera Shake
             if (_isCameraShaking)
                 UpdateShake();
+            #endregion
+
+            #region Combo
+
+            if (_comboText.enabled)
+            {
+                _comboTimer += Time.smoothDeltaTime;
+                _comboText.transform.localScale = Vector3.Lerp(ComboTextInitialScale, ComboTextFinalScale,
+                    _comboTimer/TimeForComboTextShow * 2);
+
+                if (_comboText.transform.localScale.x > 1)
+                    _comboText.transform.localScale = new Vector3(1, 1, 1);
+
+                if (_comboTimer > TimeForComboTextShow)
+                {
+                    _comboTimer = 0;
+                    _comboText.enabled = false;
+                }
+            }
+
+            #endregion
+
         }
 
         private void StartShake()
@@ -159,9 +201,46 @@ namespace Assets.Code
             Debug.Log(_camera.transform.position);
         }
 
+        public void AddToComboValue()
+        {
+            _comboValue = Math.Min(_comboValue + 1, 20);
+
+            switch ((int)_comboValue)
+            {
+                case 3:
+                    StartComboText(3);
+                    break;
+                case 5:
+                    StartComboText(5);
+                    break;
+                case 10:
+                    StartComboText(10);
+                    break;
+                case 15:
+                    StartComboText(15);
+                    break;
+                case 20:
+                    StartComboText(20);
+                    break;
+            }
+        }
+
+        public void ResetComboValue()
+        {
+            _comboValue = 0;
+        }
+
+        public void StartComboText(int comboScore)
+        {
+            _comboText.enabled = true;
+            _comboText.transform.localScale = ComboTextInitialScale;
+            _comboText.text = "Combo\nx" + comboScore;
+            _comboTimer = 0;
+        }
+
         public void AddScore(int scoreToAdd)
         {
-            _actualPointScore += scoreToAdd;
+            _actualPointScore += scoreToAdd * (int)Math.Max(_comboValue, 1);
         }
 
         public void IncreaseBallSpeed()
@@ -220,8 +299,10 @@ namespace Assets.Code
             IsPaused = false;
             TimerStarted = false;
             _currentState = 0;
+            _comboTimer = 0;
 
             SetInGameMenuActive(false);
+            _comboText.enabled = false;
             SetPaddleMovementSliderActive(GameVariablesScript.SliderMovement);
         }
 

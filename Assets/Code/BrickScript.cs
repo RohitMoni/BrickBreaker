@@ -70,6 +70,7 @@ namespace Assets.Code
 
                         // Add points
                         _gameManager.AddScore(PointValue);
+                        _gameManager.AddToComboValue();
 
                         // Reset and 'Destroy' brick
                         Reset();

@@ -62,6 +62,9 @@ namespace Assets.Code
                 var appliedVelocity = rotation*Vector3.up;
 
                 ApplyVelocity(appliedVelocity);
+
+                if (collision2D.gameObject.tag == "Paddle")
+                    _gameManager.ResetComboValue();
             }
         }
 
