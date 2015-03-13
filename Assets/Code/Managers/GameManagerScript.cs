@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,7 +21,15 @@ namespace Assets.Code
         private float _speedIncreaseTimer;
         private bool _eventCreated;
 
+        // Camera shake variables
+        private Vector3 _cameraOriginalPosition;
+        private float _radius;
+        private float _randomAngle;
+        private Vector2 _offset;
+        private bool _isCameraShaking;
+
         /* References */
+        private Camera _camera;
         private PaddleManagerScript _paddleManager;
         private BrickManagerScript  _brickManager;
         private EventTextScript _eventManager;
@@ -46,6 +55,9 @@ namespace Assets.Code
             _speedIncreaseTimer = 0;
             _eventCreated = false;
 
+            // Camera shake
+            _camera = Camera.main;
+            
             _paddleManager = GetComponent<PaddleManagerScript>();
             _brickManager = GetComponent<BrickManagerScript>();
             _eventManager = GameObject.FindGameObjectWithTag("EventText").GetComponent<EventTextScript>();
@@ -66,6 +78,12 @@ namespace Assets.Code
             if (!IsStarted)
                 StartGame();
 
+#if UNITY_EDITOR
+            if (Input.GetKeyUp(KeyCode.Return))
+            {
+                StartShake();
+            }
+#endif
             switch (_currentState)
             {
                 case -1:    // Switch to lost screen
@@ -110,6 +128,35 @@ namespace Assets.Code
                     _eventCreated = false;
                 }
             }
+
+            if (_isCameraShaking)
+                UpdateShake();
+        }
+
+        private void StartShake()
+        {
+            _isCameraShaking = true;
+            _cameraOriginalPosition = _camera.transform.position;
+            _radius = 30.0f;
+            _randomAngle = UnityEngine.Random.Range(0, 360);
+            _offset = new Vector2((float)Math.Sin(_randomAngle) * _radius * 0.01f, (float)Math.Cos(_randomAngle) * _radius * 0.01f);
+            _camera.transform.position += new Vector3(_offset.x, _offset.y, 0);
+        }
+
+        private void UpdateShake()
+        {
+            _radius *= 0.9f;
+            _randomAngle += (180 + UnityEngine.Random.Range(0, 60));
+            _offset = new Vector2((float)Math.Sin(_randomAngle) * _radius * 0.01f, (float)Math.Cos(_randomAngle) * _radius * 0.01f);
+            _camera.transform.position += new Vector3(_offset.x, _offset.y, 0);
+
+            if (_radius <= 2)
+            {
+                _isCameraShaking = false;
+                _camera.transform.position = _cameraOriginalPosition;
+            }
+
+            Debug.Log(_camera.transform.position);
         }
 
         public void AddScore(int scoreToAdd)
