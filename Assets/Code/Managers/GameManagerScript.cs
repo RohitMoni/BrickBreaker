@@ -47,7 +47,7 @@ namespace Assets.Code
         public const int BonusPointScore = 200;
         public const float TimeForSpeedIncrease = 30;
         public const float TimeForSpeedIncreaseEvent = 2.5f;
-        public const float TimeForComboTextShow = 1f;
+        public const float TimeForComboTextShow = 2f;
         public Vector3 ComboTextInitialScale = new Vector3(.5f, .5f, .5f);
         public Vector3 ComboTextFinalScale = new Vector3(1f, 1f, 1f);
 
@@ -154,7 +154,6 @@ namespace Assets.Code
             #endregion
 
             #region Combo
-
             if (_comboText.enabled)
             {
                 _comboTimer += Time.smoothDeltaTime;
@@ -170,9 +169,7 @@ namespace Assets.Code
                     _comboText.enabled = false;
                 }
             }
-
             #endregion
-
         }
 
         private void StartShake()
