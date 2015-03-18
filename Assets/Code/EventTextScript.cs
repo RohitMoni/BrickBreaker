@@ -18,6 +18,7 @@ public class EventTextScript : MonoBehaviour {
     private GameManagerScript _gameManager;
     private Image _backPanel;
     private Text _eventText;
+    private Text _comboText;
 
     /* Constants */
     private const float FlashTimeCycle = 1.0f/2f;
@@ -29,6 +30,7 @@ public class EventTextScript : MonoBehaviour {
 	void Start ()
 	{
         _gameManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<GameManagerScript>();
+        _comboText = GameObject.FindGameObjectWithTag("ComboText").GetComponent<Text>();
         _backPanel = GetComponent<Image>();
         _eventText = transform.GetChild(0).gameObject.GetComponent<Text>();
 
@@ -41,11 +43,10 @@ public class EventTextScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
 	{
-        _gameManager.Debug("");
 	    if (_gameManager.IsPaused || !_eventEnabled)
 	        return;
 
-        _gameManager.Debug("Event is On");
+	    _comboText.enabled = false;
 
         // Update flash direction
 	    if (_timerFlashTime >= FlashTimeCycle + FlashTimeHold || _timerFlashTime < 0)
@@ -124,5 +125,7 @@ public class EventTextScript : MonoBehaviour {
         colour = _eventText.color;
         colour.a = 0;
         _eventText.color = colour;
+
+        _comboText.enabled = true;
     }
 }
