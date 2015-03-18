@@ -12,6 +12,7 @@ public class EventTextScript : MonoBehaviour {
     private float _timerFlashTime;
     private float _timerTotalTime;
     private int _flashDirection;
+    private int _priority;
 
     /* References */
     private GameManagerScript _gameManager;
@@ -40,8 +41,11 @@ public class EventTextScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
 	{
+        _gameManager.Debug("");
 	    if (_gameManager.IsPaused || !_eventEnabled)
 	        return;
+
+        _gameManager.Debug("Event is On");
 
         // Update flash direction
 	    if (_timerFlashTime >= FlashTimeCycle + FlashTimeHold || _timerFlashTime < 0)
@@ -69,8 +73,11 @@ public class EventTextScript : MonoBehaviour {
             StopEvent();
 	}
 
-    public void CreateEvent(string textToDisplay, float timeTillStop =0)
+    public void CreateEvent(string textToDisplay, float timeTillStop =0, int priority =0)
     {
+        if (priority < _priority)
+            return;
+
         // Reset timers and things
         Reset();
 
@@ -80,6 +87,7 @@ public class EventTextScript : MonoBehaviour {
         // Set values
         _eventText.text = textToDisplay;
         _timeToStop = timeTillStop;
+        _priority = priority;
 
         // Enable stuff to show
         _backPanel.enabled = true;
@@ -103,8 +111,10 @@ public class EventTextScript : MonoBehaviour {
 
     private void Reset()
     {
+        _priority = 0;
         _timeToStop = 0;
         _timerFlashTime = 0;
+        _timerTotalTime = 0;
         _flashDirection = 1;
         _eventEnabled = false;
 

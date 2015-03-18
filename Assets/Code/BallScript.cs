@@ -39,24 +39,24 @@ namespace Assets.Code
 
         public void OnCollisionEnter2D(Collision2D collision2D)
         {
-            if (collision2D.gameObject.tag == "OuterRing")
-            {
-                // Destroy ball
-                Destroy(gameObject);
+            //if (collision2D.gameObject.tag == "OuterRing")
+            //{
+            //    // Destroy ball
+            //    Destroy(gameObject);
 
-                // Check for loss condition
-                var remainingBalls = GameObject.FindGameObjectsWithTag("Ball");
-                var lost = true;
-                foreach (var ball in remainingBalls)
-                {
-                    if (ball != gameObject)
-                        lost = false;
-                }
+            //    // Check for loss condition
+            //    var remainingBalls = GameObject.FindGameObjectsWithTag("Ball");
+            //    var lost = true;
+            //    foreach (var ball in remainingBalls)
+            //    {
+            //        if (ball != gameObject)
+            //            lost = false;
+            //    }
 
-                if (lost)
-                    _gameManager.SetWinLossState(false);
-            }
-            else
+            //    if (lost)
+            //        _gameManager.SetWinLossState(false);
+            //}
+            //else
             {
                 var rotation = Quaternion.FromToRotation(Vector3.up, collision2D.contacts[0].normal);
                 var appliedVelocity = rotation*Vector3.up;
