@@ -125,7 +125,5 @@ public class EventTextScript : MonoBehaviour {
         colour = _eventText.color;
         colour.a = 0;
         _eventText.color = colour;
-
-        _comboText.enabled = true;
     }
 }

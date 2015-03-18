@@ -45,8 +45,8 @@ namespace Assets.Code
 
         /* Constants */
         public const int BonusPointScore = 200;
-        public const float TimeForSpeedIncrease = 5;
-        public const float TimeForSpeedIncreaseEvent = 3f;
+        public const float TimeForSpeedIncrease = 30;
+        public const float TimeForSpeedIncreaseEvent = 5f;
         public const float TimeForComboTextShow = 2f;
         public Vector3 ComboTextInitialScale = new Vector3(.5f, .5f, .5f);
         public Vector3 ComboTextFinalScale = new Vector3(1f, 1f, 1f);
