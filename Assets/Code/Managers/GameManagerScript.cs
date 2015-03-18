@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UI;
 using Timer = System.Timers.Timer;
@@ -20,6 +21,7 @@ namespace Assets.Code
         private float _timer;
         private float _speedIncreaseTimer;
         private bool _eventCreated;
+        private int _backgroundColourIndex;
 
         // Combo variables
         private float _comboValue;
@@ -39,6 +41,7 @@ namespace Assets.Code
         private EventTextScript _eventManager;
         private GameObject _inGameMenu;
         private GameObject _controlSlider;
+        private SpriteRenderer _backgroundImage;
         private Text _scoreText;
         private Text _timeText;
         private Text _comboText;
@@ -50,6 +53,7 @@ namespace Assets.Code
         public const float TimeForComboTextShow = 2f;
         public Vector3 ComboTextInitialScale = new Vector3(.5f, .5f, .5f);
         public Vector3 ComboTextFinalScale = new Vector3(1f, 1f, 1f);
+        public const float BackgroundColourChangeSpeed = 3;
 
         // Use this for initialization
         void Start ()
@@ -63,6 +67,7 @@ namespace Assets.Code
             _speedIncreaseTimer = 0;
             _eventCreated = false;
             _comboTimer = 0;
+            _backgroundColourIndex = 1;
 
             // Camera shake
             _camera = Camera.main;
@@ -75,6 +80,7 @@ namespace Assets.Code
             _scoreText = GameObject.FindGameObjectWithTag("ScoreText").GetComponent<Text>();
             _timeText = GameObject.FindGameObjectWithTag("TimeText").GetComponent<Text>();
             _comboText = GameObject.FindGameObjectWithTag("ComboText").GetComponent<Text>();
+            _backgroundImage = GameObject.FindGameObjectWithTag("BackgroundImage").GetComponent<SpriteRenderer>();
 
             _comboText.enabled = false;
         }
@@ -169,6 +175,46 @@ namespace Assets.Code
                     _comboText.enabled = false;
                 }
             }
+            #endregion
+
+            #region Background Colour Shift
+
+            var colour = _backgroundImage.color;
+            switch (_backgroundColourIndex)
+            {
+                case 0:
+                    colour.r += BackgroundColourChangeSpeed / 255f;
+                    if (colour.r >= 1)
+                        _backgroundColourIndex++;
+                    break;
+                case 1:
+                    colour.b -= BackgroundColourChangeSpeed / 255f;
+                    if (colour.b <= 0)
+                        _backgroundColourIndex++;
+                    break;
+                case 2:
+                    colour.g += BackgroundColourChangeSpeed / 255f;
+                    if (colour.g >= 1)
+                        _backgroundColourIndex++;
+                    break;
+                case 3:
+                    colour.r -= BackgroundColourChangeSpeed / 255f;
+                    if (colour.r <= 0)
+                        _backgroundColourIndex++;
+                    break;
+                case 4:
+                    colour.b += BackgroundColourChangeSpeed / 255f;
+                    if (colour.b >= 1)
+                        _backgroundColourIndex++;
+                    break;
+                case 5:
+                    colour.g -= BackgroundColourChangeSpeed / 255f;
+                    if (colour.g <= 0)
+                        _backgroundColourIndex = 0;
+                    break;
+            }
+            _backgroundImage.color = colour;
+
             #endregion
         }
 
@@ -275,6 +321,7 @@ namespace Assets.Code
         {
             IsPaused = !IsPaused;
             SetInGameMenuActive(IsPaused);
+            SetPaddleMovementSliderActive(!IsPaused && GameVariablesScript.SliderMovement);
         }
 
         private void SetInGameMenuActive(bool active)
