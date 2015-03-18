@@ -172,7 +172,7 @@ public class PaddleManagerScript : MonoBehaviour
         {
             if (GameVariablesScript.RelativePaddle)
             {
-                // OLD RELATIVE MOVEMENT
+                // RELATIVE MOVEMENT - Buggy
                 if (touch.phase == TouchPhase.Moved)
                 {
                     var touchPoint = _camera.ScreenToWorldPoint(touch.position);
@@ -186,9 +186,11 @@ public class PaddleManagerScript : MonoBehaviour
                     var finalPointAngle = Mathf.Atan2(finalPoint.y, finalPoint.x) * Mathf.Rad2Deg + 180f;
 
                     var angleDifference = finalPointAngle - touchPointAngle;
-                    if (Mathf.Abs(angleDifference) > 330)
+                    if (Mathf.Abs(angleDifference) > 100)
+                    {
                         // arbitrary high number that represents when the two points are in different quadrants
-                        angleDifference += (360 * -Mathf.Sign(angleDifference));
+                        angleDifference += (360*-Mathf.Sign(angleDifference));
+                    }
 
                     angleDifference *= GameVariablesScript.Sensitivity;
 
@@ -199,7 +201,7 @@ public class PaddleManagerScript : MonoBehaviour
             }
             else
             {
-                // OLD ABSOLUTE MOVEMENT
+                // ABSOLUTE MOVEMENT
                 if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)
                 {
                     // Ignore touches that hit the pause button

@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Linq;
-using System.Threading;
-using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.UI;
-using Timer = System.Timers.Timer;
 
 namespace Assets.Code
 {
@@ -45,6 +41,7 @@ namespace Assets.Code
         private Text _scoreText;
         private Text _timeText;
         private Text _comboText;
+        private Text _debugText;
 
         /* Constants */
         public const int BonusPointScore = 200;
@@ -83,6 +80,10 @@ namespace Assets.Code
             _backgroundImage = GameObject.FindGameObjectWithTag("BackgroundImage").GetComponent<SpriteRenderer>();
 
             _comboText.enabled = false;
+
+            var obj = GameObject.FindGameObjectWithTag("DebugText");
+            if (obj)
+                _debugText = obj.GetComponent<Text>();
         }
 
         void Awake()
@@ -240,8 +241,6 @@ namespace Assets.Code
                 _isCameraShaking = false;
                 _camera.transform.position = _cameraOriginalPosition;
             }
-
-            Debug.Log(_camera.transform.position);
         }
 
         public void AddToComboValue()
@@ -352,8 +351,13 @@ namespace Assets.Code
 
         public void SetWinLossState(bool state)
         {
-            Debug.Log("Game " + (state? "Won" : "Lost"));
             _currentState = (state) ? 1 : -1;
+        }
+
+        public void Debug(string text)
+        {
+            if (_debugText)
+                _debugText.text = text;
         }
     }
 }
