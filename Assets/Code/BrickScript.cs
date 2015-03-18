@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Assets.Code
 {
@@ -19,21 +20,33 @@ namespace Assets.Code
         private GameManagerScript _gameManager;
         private BrickManagerScript _brickManager;
 
+        /* Constants */
+        private const int DefaultBrickHealth = 1;
+
         // Use this for initialization
         void Start () {
             _gameManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<GameManagerScript>();
             _brickManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<BrickManagerScript>();
             _brickDestroyEffect = GameObject.FindGameObjectWithTag("ParticleBrickDestroy");
             PointValue = 50;
-            HealthTotal = 1;
-            CurrentHealth = 1;
+            HealthTotal = DefaultBrickHealth;
+            CurrentHealth = DefaultBrickHealth;
             GetComponent<SpriteRenderer>().sprite = BrickHealth0;
         }
 
         private void Reset()
         {
-            CurrentHealth = 1;
+            CurrentHealth = HealthTotal;
             GetComponent<SpriteRenderer>().sprite = BrickHealth0;
+        }
+
+        public void SetBrickHealth(int value)
+        {
+            value = Math.Min(4, value);
+            value = Math.Max(0, value);
+
+            HealthTotal = value;
+            CurrentHealth = value;
         }
 
         public void OnCollisionEnter2D(Collision2D collision2D)
