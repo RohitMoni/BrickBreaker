@@ -8,9 +8,10 @@ public class GameVariablesScript : MonoBehaviour {
     private const bool DefaultSliderMovement = true;
     private const int DefaultSensitivity = 5;
     private const int DefaultBallSpeed = 5;
+    public const int MaxBallSpeed = 15;
 
     /* Game Properties */
-    public static float BallSpeedCoeff = 200f;
+    public static float BallSpeedCoeff = 2f;
     public static float PaddleSensitivityCoeff = 50f;
 
     public static bool RelativePaddle = DefaultRelativePaddle;

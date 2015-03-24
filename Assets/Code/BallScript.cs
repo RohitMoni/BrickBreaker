@@ -28,7 +28,7 @@ namespace Assets.Code
         void Update () {
             if (!_gameManager.IsPaused)
             {
-                transform.position += Velocity;
+                transform.position += Velocity * Time.smoothDeltaTime;
             }
         }
 

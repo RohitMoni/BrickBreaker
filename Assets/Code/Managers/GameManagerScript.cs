@@ -290,7 +290,7 @@ namespace Assets.Code
             var currentSpeed = GameVariablesScript.BallSpeed*GameVariablesScript.BallSpeedCoeff;
             currentSpeed++;
 
-            currentSpeed = Math.Min(currentSpeed, 10);
+            currentSpeed = Math.Min(currentSpeed, GameVariablesScript.MaxBallSpeed);
             GameVariablesScript.BallSpeed = currentSpeed / GameVariablesScript.BallSpeedCoeff;
         }
 
