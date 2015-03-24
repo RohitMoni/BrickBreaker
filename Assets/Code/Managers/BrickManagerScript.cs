@@ -17,17 +17,22 @@ namespace Assets.Code
         /* Properties */
         private List<BrickRing> _brickRings;
 
+        private int _brickHealth;
         private bool _brickPause;
+        private bool _isShockwaving;
+        private float _shockwaveTimer;
+        private int _shockwaveCounter;
 
         /* Consts */
         private const int NumberOfRings = 3;
 
         private const float InitialScale = 0.20f;
         private readonly float[] _ringScaleLevels = { 1.7f, 1.22f, 0.74f };
-
         private const float ScaleUpSpeed = 0.02f;
 
         private const float RingRotationSpeed = 0.2f;
+
+        private const float ShockwaveSpeed = 0.2f;
 
         // Use this for initialization
         void Start ()
@@ -35,6 +40,7 @@ namespace Assets.Code
             _gameManager = GetComponent<GameManagerScript>();
             _brickAnchor = GameObject.FindGameObjectWithTag("BrickAnchor");
             _brickRings = new List<BrickRing>();
+            _brickHealth = 1;
         }
 	
         // Update is called once per frame
@@ -43,12 +49,15 @@ namespace Assets.Code
 #if UNITY_EDITOR
             if (Input.GetKeyUp(KeyCode.Tab))
             {
-                var ring = _brickRings[0];
+                //var ring = _brickRings[0];
 
-                foreach (Transform brick in ring.Anchor.transform)
-                    brick.gameObject.SetActive(false);
+                //foreach (Transform brick in ring.Anchor.transform)
+                //    brick.gameObject.SetActive(false);
 
-                CheckRings();
+                //CheckRings();
+
+                _brickHealth++;
+                StartShockwave();
             }
 #endif
             if (_gameManager.IsPaused || _brickPause)
@@ -77,6 +86,30 @@ namespace Assets.Code
                 // Rotate rings
                 _brickRings[i].Anchor.transform.Rotate(Vector3.forward, RingRotationSpeed * ringRotation);
                 ringRotation *= -1;
+            }
+
+            // shockwave
+            if (_isShockwaving)
+            {
+                _shockwaveTimer += Time.smoothDeltaTime;
+
+                if (_shockwaveTimer > ShockwaveSpeed)
+                {
+                    // Destroy ring
+                    var ring = _brickRings[0];
+
+                    foreach (Transform brick in ring.Anchor.transform)
+                        brick.GetComponent<BrickScript>().DestroyBrick();
+
+                    CheckRings();
+
+                    // Reset Timer and Increment counter
+                    _shockwaveTimer = 0;
+                    _shockwaveCounter++;
+
+                    if (_shockwaveCounter > _brickRings.Count)
+                        _isShockwaving = false;
+                }
             }
         }
 
@@ -120,9 +153,17 @@ namespace Assets.Code
                 CreateNewBrickRing();
         }
 
+        public void StartShockwave()
+        {
+            _shockwaveCounter = 1;
+            _isShockwaving = true;
+            _shockwaveTimer = 0;
+            _gameManager.StartShake();
+        }
+        
         void CreateNewBrickRing()
         {
-            var gO = new BrickRing(12, this);
+            var gO = new BrickRing(12, _brickHealth, this);
             var anchor = gO.Anchor;
             anchor.transform.position = new Vector3(0, 0, -2);
             anchor.transform.localScale = new Vector3(InitialScale, InitialScale, InitialScale);
@@ -139,7 +180,10 @@ namespace Assets.Code
             anchor.transform.parent = _brickAnchor.transform;
 
             foreach (Transform child in anchor.transform)
+            {
                 child.gameObject.SetActive(true);
+                child.gameObject.GetComponent<BrickScript>().SetBrickHealth(_brickHealth);
+            }
         }
 
         public class BrickRing
@@ -147,7 +191,7 @@ namespace Assets.Code
             public GameObject Anchor;
             public float Time;
 
-            public BrickRing(int numberOfBricks, BrickManagerScript brickManager)
+            public BrickRing(int numberOfBricks, int brickHealth, BrickManagerScript brickManager)
             {
                 Anchor = new GameObject {name = "Brick Ring Anchor"};
 
@@ -160,6 +204,8 @@ namespace Assets.Code
                     newBrick.transform.parent = Anchor.transform;
                     newBrick.transform.localEulerAngles = new Vector3(0, 0, 360.0f / numberOfBricks * i);
                     newBrick.transform.localPosition = (newBrick.transform.rotation * new Vector3(0, -1.7f, 0));
+
+                    newBrick.GetComponent<BrickScript>().SetBrickHealth(brickHealth);
                 }
             }
         }

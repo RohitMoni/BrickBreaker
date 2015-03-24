@@ -219,7 +219,7 @@ namespace Assets.Code
             #endregion
         }
 
-        private void StartShake()
+        public void StartShake()
         {
             _isCameraShaking = true;
             _cameraOriginalPosition = _camera.transform.position;

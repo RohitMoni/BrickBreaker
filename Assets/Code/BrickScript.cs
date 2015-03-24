@@ -47,6 +47,45 @@ namespace Assets.Code
 
             HealthTotal = value;
             CurrentHealth = value;
+
+            var comp = GetComponent<SpriteRenderer>();
+            switch (value)
+            {
+                case 1:
+                    comp.color = Color.yellow;
+                    break;
+                case 2:
+                    comp.color = Color.green;
+                    break;
+                case 3:
+                    comp.color = Color.cyan;
+                    break;
+                case 4:
+                    comp.color = Color.magenta;
+                    break;
+            }
+        }
+
+        public void DestroyBrick(Quaternion particleRotation =new Quaternion())
+        {
+            // Move and rotate particle effect
+            var position = transform.position;
+            position.z = -4;
+            _brickDestroyEffect.transform.position = position;
+
+            _brickDestroyEffect.transform.rotation = particleRotation;
+
+            // Play particle effect
+            _brickDestroyEffect.GetComponent<ParticleSystem>().Emit((int)(transform.parent.localScale.x * 8));
+
+            // Add points
+            _gameManager.AddScore(PointValue);
+            _gameManager.AddToComboValue();
+
+            // Reset and 'Destroy' brick
+            Reset();
+            gameObject.SetActive(false);
+            _brickManager.CheckRings();
         }
 
         public void OnCollisionEnter2D(Collision2D collision2D)
@@ -67,28 +106,13 @@ namespace Assets.Code
                         GetComponent<SpriteRenderer>().sprite = BrickHealth3;
                         break;
                     case 0:
-                        // Move and rotate particle effect
-                        var position = transform.position;
-                        position.z = -4;
-                        _brickDestroyEffect.transform.position = position;
-
                         var rotationVel = -collision2D.gameObject.GetComponent<BallScript>().Velocity.normalized;
                         var angle = Mathf.Atan2(rotationVel.y, rotationVel.x)*Mathf.Rad2Deg;
                         angle += 90;
                         var rotation = Quaternion.Euler(0, 0, angle);
-                        _brickDestroyEffect.transform.rotation = rotation;
 
-                        // Play particle effect
-                        _brickDestroyEffect.GetComponent<ParticleSystem>().Emit((int) (transform.parent.localScale.x*8));
-
-                        // Add points
-                        _gameManager.AddScore(PointValue);
-                        _gameManager.AddToComboValue();
-
-                        // Reset and 'Destroy' brick
-                        Reset();
-                        gameObject.SetActive(false);
-                        _brickManager.CheckRings();
+                        DestroyBrick(rotation);
+                        
                         break;
                 }
             }
