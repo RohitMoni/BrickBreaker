@@ -18,10 +18,9 @@ namespace Assets.Code
         private float _speedIncreaseTimer;
         private bool _eventCreated;
         private int _backgroundColourIndex;
-
-        // Combo variables
         private float _comboValue;
         private float _comboTimer;
+        private Vector3 _zeroAcceleraton;
 
         // Camera shake variables
         private Vector3 _cameraOriginalPosition;
@@ -66,6 +65,7 @@ namespace Assets.Code
             _eventCreated = false;
             _comboTimer = 0;
             _backgroundColourIndex = 1;
+            _zeroAcceleraton = Input.acceleration;
 
             // Camera shake
             _camera = Camera.main;
@@ -99,7 +99,7 @@ namespace Assets.Code
             if (!IsStarted)
                 StartGame();
 
-            #region Editor only
+            #region Editor stuff
 #if UNITY_EDITOR
             if (Input.GetKeyUp(KeyCode.Return))
             {
@@ -124,6 +124,13 @@ namespace Assets.Code
             }
 #endif
             #endregion
+
+            if (SystemInfo.deviceType == DeviceType.Handheld)
+            {
+                // Invert the z and w of the gyro attitude
+                var rotation = Input.gyro.attitude;
+                Physics.gravity = rotation * new Vector3(0, -1, 0);
+            }
 
             switch (_currentState)
             {
