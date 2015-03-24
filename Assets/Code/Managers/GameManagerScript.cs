@@ -309,6 +309,8 @@ namespace Assets.Code
             if (_actualPointScore > GameVariablesScript.HighScore)
                 GameVariablesScript.HighScore = _actualPointScore;
 
+            SaveGame();
+
             ResetGame();
 
             // Make the main menu scene load up the score screen first
@@ -354,6 +356,13 @@ namespace Assets.Code
         public void SetWinLossState(bool state)
         {
             _currentState = (state) ? 1 : -1;
+        }
+
+        private void SaveGame()
+        {
+            var data = "High Score: " + GameVariablesScript.HighScore;
+
+            FileServices.SaveFile(GameVariablesScript.GameFile, data);
         }
 
         public void Debug(string text)

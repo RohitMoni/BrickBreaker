@@ -9,11 +9,12 @@ public class GameVariablesScript : MonoBehaviour {
     private const int DefaultSensitivity = 5;
     private const int DefaultBallSpeed = 5;
     public const int MaxBallSpeed = 15;
-
-    /* Game Properties */
     public static float BallSpeedCoeff = 2f;
     public static float PaddleSensitivityCoeff = 50f;
 
+    public static string GameFile = "playerData.dat";
+
+    /* Game Properties */
     public static bool RelativePaddle = DefaultRelativePaddle;
     public static bool SliderMovement = DefaultSliderMovement;
     public static float Sensitivity = DefaultSensitivity / PaddleSensitivityCoeff;
@@ -21,7 +22,6 @@ public class GameVariablesScript : MonoBehaviour {
 
     /* Other Global Variables */
     public static int ScreenToStartOn = 0;
-
     public static int HighScore = 0;
     public static int LastScore = 0;
 }

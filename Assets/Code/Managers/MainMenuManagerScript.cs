@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Mime;
 using System.Timers;
+using Assets.Code;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -47,6 +49,8 @@ public class MainMenuManagerScript : MonoBehaviour {
 
         _shiftStartPosition = new Vector3(GameVariablesScript.ScreenToStartOn * 1080, 0, -10);
 	    _camera.transform.position = _shiftStartPosition;
+
+        LoadGame();
 
         // Setting ui elements from game variables
         foreach (var highScoreTextObj in _highScoreText)
@@ -133,7 +137,20 @@ public class MainMenuManagerScript : MonoBehaviour {
         Application.Quit();
     }
 
-    #region Settings
+    private void LoadGame()
+    {
+        var data = FileServices.LoadFile(GameVariablesScript.GameFile);
+
+        var location = data.IndexOf(':');
+        if (location == 0)
+            return;
+
+        var score = Int32.Parse(data.Substring(location+1));
+
+        GameVariablesScript.HighScore = score;
+    }
+
+    #region Menu Controlled Settings
     public void SetRelativePaddle(bool value)
     {
         GameVariablesScript.RelativePaddle = value;
