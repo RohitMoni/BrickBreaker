@@ -158,7 +158,7 @@ public class PaddleManagerScript : MonoBehaviour
                 {
                     var valueDifference = sliderValue - 180;
 
-                    var angleDifference = valueDifference * GameVariablesScript.Sensitivity;
+                    var angleDifference = valueDifference * GameVariablesScript.PaddleSensitivity;
 
                     _currentSliderMovement = new Quaternion { eulerAngles = new Vector3(0, 0, angleDifference) };
                 }
@@ -192,7 +192,7 @@ public class PaddleManagerScript : MonoBehaviour
                         angleDifference += (360*-Mathf.Sign(angleDifference));
                     }
 
-                    angleDifference *= GameVariablesScript.Sensitivity;
+                    angleDifference *= GameVariablesScript.PaddleSensitivity;
 
                     var rotationChange = new Quaternion { eulerAngles = new Vector3(0, 0, angleDifference) };
 

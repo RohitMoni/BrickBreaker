@@ -50,7 +50,7 @@ public class MainMenuManagerScript : MonoBehaviour {
         _shiftStartPosition = new Vector3(GameVariablesScript.ScreenToStartOn * 1080, 0, -10);
 	    _camera.transform.position = _shiftStartPosition;
 
-        LoadGame();
+        FileServices.LoadGame();
 
         // Setting ui elements from game variables
         foreach (var highScoreTextObj in _highScoreText)
@@ -58,7 +58,7 @@ public class MainMenuManagerScript : MonoBehaviour {
         _lastScoreText.text = GameVariablesScript.LastScore.ToString();
 	    _relativeMovementToggle.isOn = GameVariablesScript.RelativePaddle;
 	    _sliderMovementToggle.isOn = GameVariablesScript.SliderMovement;
-	    _sensitivitySlider.value = GameVariablesScript.Sensitivity*GameVariablesScript.PaddleSensitivityCoeff;
+	    _sensitivitySlider.value = GameVariablesScript.PaddleSensitivity*GameVariablesScript.PaddleSensitivityCoeff;
 	    _ballSpeedSlider.value = GameVariablesScript.BallSpeed*GameVariablesScript.BallSpeedCoeff;
 	}
 	
@@ -134,20 +134,8 @@ public class MainMenuManagerScript : MonoBehaviour {
 
     public void QuitGame()
     {
+        FileServices.SaveLog();
         Application.Quit();
-    }
-
-    private void LoadGame()
-    {
-        var data = FileServices.LoadFile(GameVariablesScript.GameFile);
-
-        var location = data.IndexOf(':');
-        if (location == 0)
-            return;
-
-        var score = Int32.Parse(data.Substring(location+1));
-
-        GameVariablesScript.HighScore = score;
     }
 
     #region Menu Controlled Settings
@@ -161,21 +149,26 @@ public class MainMenuManagerScript : MonoBehaviour {
         _sensitivitySlider.transform.GetChild(0).GetComponent<Image>().color = colour;
         _sensitivitySlider.transform.GetChild(1).GetChild(0).GetComponent<Image>().color = colour;
         _sensitivitySlider.transform.GetChild(3).GetComponent<Text>().color = colour;
+
+        FileServices.SaveGame();
     }
 
     public void SetSliderMovement(bool value)
     {
         GameVariablesScript.SliderMovement = value;
+        FileServices.SaveGame();
     }
 
     public void SetSensitivity(float value)
     {
-        GameVariablesScript.Sensitivity = value / GameVariablesScript.PaddleSensitivityCoeff;
+        GameVariablesScript.PaddleSensitivity = value / GameVariablesScript.PaddleSensitivityCoeff;
+        FileServices.SaveGame();
     }
 
     public void SetBallSpeed(float value)
     {
         GameVariablesScript.BallSpeed = value / GameVariablesScript.BallSpeedCoeff;
+        FileServices.SaveGame();
     }
     #endregion
 }
