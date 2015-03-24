@@ -17,7 +17,7 @@ namespace Assets.Code
         /* Properties */
         private List<BrickRing> _brickRings;
 
-        private int _brickHealth;
+        public int BrickHealth;
         private bool _brickPause;
         private bool _isShockwaving;
         private float _shockwaveTimer;
@@ -40,26 +40,12 @@ namespace Assets.Code
             _gameManager = GetComponent<GameManagerScript>();
             _brickAnchor = GameObject.FindGameObjectWithTag("BrickAnchor");
             _brickRings = new List<BrickRing>();
-            _brickHealth = 1;
+            BrickHealth = 1;
         }
 	
         // Update is called once per frame
         void Update ()
         {
-#if UNITY_EDITOR
-            if (Input.GetKeyUp(KeyCode.Tab))
-            {
-                //var ring = _brickRings[0];
-
-                //foreach (Transform brick in ring.Anchor.transform)
-                //    brick.gameObject.SetActive(false);
-
-                //CheckRings();
-
-                _brickHealth++;
-                StartShockwave();
-            }
-#endif
             if (_gameManager.IsPaused || _brickPause)
                 return;
 
@@ -173,7 +159,7 @@ namespace Assets.Code
         
         void CreateNewBrickRing()
         {
-            var gO = new BrickRing(12, _brickHealth, this);
+            var gO = new BrickRing(12, BrickHealth, this);
             var anchor = gO.Anchor;
             anchor.transform.position = new Vector3(0, 0, -2);
             anchor.transform.localScale = new Vector3(InitialScale, InitialScale, InitialScale);
@@ -196,7 +182,7 @@ namespace Assets.Code
                 brick.gameObject.SetActive(true);
                 var isBrick = brick.gameObject.GetComponent<BrickScript>();
                 if (isBrick)
-                    isBrick.SetBrickHealth(_brickHealth);
+                    isBrick.SetBrickHealth(BrickHealth);
             }
         }
 

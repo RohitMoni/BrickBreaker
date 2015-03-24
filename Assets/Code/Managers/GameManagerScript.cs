@@ -38,6 +38,7 @@ namespace Assets.Code
         private GameObject _inGameMenu;
         private GameObject _controlSlider;
         private SpriteRenderer _backgroundImage;
+        private InnerRingScript _innerRing;
         private Text _scoreText;
         private Text _timeText;
         private Text _comboText;
@@ -78,6 +79,7 @@ namespace Assets.Code
             _timeText = GameObject.FindGameObjectWithTag("TimeText").GetComponent<Text>();
             _comboText = GameObject.FindGameObjectWithTag("ComboText").GetComponent<Text>();
             _backgroundImage = GameObject.FindGameObjectWithTag("BackgroundImage").GetComponent<SpriteRenderer>();
+            _innerRing = GameObject.FindGameObjectWithTag("InnerRing").GetComponent<InnerRingScript>();
 
             _comboText.enabled = false;
 
@@ -107,6 +109,18 @@ namespace Assets.Code
             if (Input.GetKeyUp(KeyCode.Escape) && !IsPaused)
             {
                 TogglePause();
+            }
+
+            if (Input.GetKeyUp(KeyCode.Tab))
+            {
+                //var ring = _brickRings[0];
+
+                //foreach (Transform brick in ring.Anchor.transform)
+                //    brick.gameObject.SetActive(false);
+
+                //CheckRings();
+
+                GoToNextLevel();
             }
 #endif
             #endregion
@@ -217,6 +231,14 @@ namespace Assets.Code
             _backgroundImage.color = colour;
 
             #endregion
+        }
+
+        public void GoToNextLevel()
+        {
+            _brickManager.BrickHealth++;
+            _innerRing.IncreaseLevel();
+
+            _brickManager.StartShockwave();
         }
 
         public void StartShake()
