@@ -68,6 +68,9 @@ namespace Assets.Code
 
         public void DestroyBrick(Quaternion particleRotation =new Quaternion())
         {
+            if (particleRotation.z == 0)
+                particleRotation = Quaternion.identity;
+
             // Move and rotate particle effect
             var position = transform.position;
             position.z = -4;
@@ -76,6 +79,7 @@ namespace Assets.Code
             _brickDestroyEffect.transform.rotation = particleRotation;
 
             // Play particle effect
+            _brickDestroyEffect.GetComponent<ParticleSystem>().startColor = GetComponent<SpriteRenderer>().color;
             _brickDestroyEffect.GetComponent<ParticleSystem>().Emit((int)(transform.parent.localScale.x * 8));
 
             // Add points
@@ -85,7 +89,6 @@ namespace Assets.Code
             // Reset and 'Destroy' brick
             Reset();
             gameObject.SetActive(false);
-            _brickManager.CheckRings();
         }
 
         public void OnCollisionEnter2D(Collision2D collision2D)
@@ -112,6 +115,7 @@ namespace Assets.Code
                         var rotation = Quaternion.Euler(0, 0, angle);
 
                         DestroyBrick(rotation);
+                        _brickManager.CheckRings();
                         
                         break;
                 }

@@ -96,39 +96,49 @@ namespace Assets.Code
                 if (_shockwaveTimer > ShockwaveSpeed)
                 {
                     // Destroy ring
-                    var ring = _brickRings[0];
+                    var ring = _brickRings[_shockwaveCounter-1];
 
                     foreach (Transform brick in ring.Anchor.transform)
-                        brick.GetComponent<BrickScript>().DestroyBrick();
-
-                    CheckRings();
+                    {
+                        if (brick.gameObject.activeSelf)
+                            brick.GetComponent<BrickScript>().DestroyBrick();
+                    }
 
                     // Reset Timer and Increment counter
                     _shockwaveTimer = 0;
                     _shockwaveCounter++;
 
                     if (_shockwaveCounter > _brickRings.Count)
+                    {
                         _isShockwaving = false;
+                        CheckRings();
+                    }
                 }
             }
         }
 
         public void CheckRings()
         {
+            var ringsToRecycle = new List<BrickRing>(_brickRings.Count);
+
             for (var i = 0; i < _brickRings.Count; i++)
             {
                 var ring = _brickRings[i];
 
                 var count = ring.Anchor.transform.Cast<Transform>().Count(child => child.gameObject.activeSelf);
 
-                if (count == 0) // If there are no active children, we shuffle the ring into the inactive pile
+                if (count == 0) // If there are no active children, we reset the ring and shift it to the start of the list
                 {
-                    _brickRings.RemoveAt(i);
-
-                    ResetBrickRing(ring);
-                    
-                    _brickRings.Add(ring);
+                    ringsToRecycle.Add(ring);
                 }
+            }
+
+            foreach (var ring in ringsToRecycle)
+            {
+                ResetBrickRing(ring);
+
+                _brickRings.Remove(ring);
+                _brickRings.Add(ring);
             }
         }
 
@@ -179,10 +189,14 @@ namespace Assets.Code
             anchor.transform.localScale = new Vector3(InitialScale, InitialScale, InitialScale);
             anchor.transform.parent = _brickAnchor.transform;
 
-            foreach (Transform child in anchor.transform)
+            var list = anchor.GetComponentsInChildren<Transform>(true);
+
+            foreach (var brick in list)
             {
-                child.gameObject.SetActive(true);
-                child.gameObject.GetComponent<BrickScript>().SetBrickHealth(_brickHealth);
+                brick.gameObject.SetActive(true);
+                var isBrick = brick.gameObject.GetComponent<BrickScript>();
+                if (isBrick)
+                    isBrick.SetBrickHealth(_brickHealth);
             }
         }
 
