@@ -28,7 +28,7 @@ namespace Assets.Code
             _gameManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<GameManagerScript>();
             _brickManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<BrickManagerScript>();
             _brickDestroyEffect = GameObject.FindGameObjectWithTag("ParticleBrickDestroy");
-            PointValue = 50;
+            PointValue = 10;
             HealthTotal = DefaultBrickHealth;
             CurrentHealth = DefaultBrickHealth;
             GetComponent<SpriteRenderer>().sprite = BrickHealth0;
@@ -83,7 +83,7 @@ namespace Assets.Code
             _brickDestroyEffect.GetComponent<ParticleSystem>().Emit((int)(transform.parent.localScale.x * 8));
 
             // Add points
-            _gameManager.AddScore(PointValue);
+            _gameManager.AddScore(PointValue * HealthTotal);
             _gameManager.AddToComboValue();
 
             // Reset and 'Destroy' brick

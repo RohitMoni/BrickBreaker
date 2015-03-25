@@ -20,6 +20,7 @@ namespace Assets.Code
         private int _backgroundColourIndex;
         private float _comboValue;
         private float _comboTimer;
+        private int _currentLevel;
         private Vector3 _zeroAcceleraton;
 
         // Camera shake variables
@@ -66,6 +67,7 @@ namespace Assets.Code
             _comboTimer = 0;
             _backgroundColourIndex = 1;
             _zeroAcceleraton = Input.acceleration;
+            _currentLevel = 1;
 
             // Camera shake
             _camera = Camera.main;
@@ -243,6 +245,7 @@ namespace Assets.Code
         public void GoToNextLevel()
         {
             _brickManager.BrickHealth++;
+            _currentLevel++;
             _innerRing.IncreaseLevel();
 
             _brickManager.StartShockwave();
@@ -311,7 +314,7 @@ namespace Assets.Code
 
         public void AddScore(int scoreToAdd)
         {
-            _actualPointScore += scoreToAdd * (int)Math.Max(_comboValue, 1);
+            _actualPointScore += scoreToAdd * (int)Math.Max(_comboValue, 1) * _currentLevel;
         }
 
         public void IncreaseBallSpeed()
