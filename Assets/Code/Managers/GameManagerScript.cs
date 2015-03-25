@@ -127,12 +127,12 @@ namespace Assets.Code
 #endif
             #endregion
 
-            if (SystemInfo.deviceType == DeviceType.Handheld)
-            {
-                // Invert the z and w of the gyro attitude
-                var rotation = Input.gyro.attitude;
-                Physics.gravity = rotation * new Vector3(0, -1, 0);
-            }
+            //if (SystemInfo.deviceType == DeviceType.Handheld)
+            //{
+            //    // Invert the z and w of the gyro attitude
+            //    var rotation = Input.gyro.attitude;
+            //    Physics.gravity = rotation * new Vector3(0, 1, 0);
+            //}
 
             switch (_currentState)
             {

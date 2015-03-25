@@ -170,5 +170,20 @@ public class MainMenuManagerScript : MonoBehaviour {
         GameVariablesScript.BallSpeed = value / GameVariablesScript.BallSpeedCoeff;
         FileServices.SaveGame();
     }
+
+    public void Reset()
+    {
+        GameVariablesScript.ResetVariables();
+        _relativeMovementToggle.isOn = GameVariablesScript.RelativePaddle;
+        _sliderMovementToggle.isOn = GameVariablesScript.SliderMovement;
+        _sensitivitySlider.value = GameVariablesScript.PaddleSensitivity * GameVariablesScript.PaddleSensitivityCoeff;
+        _ballSpeedSlider.value = GameVariablesScript.BallSpeed * GameVariablesScript.BallSpeedCoeff;
+
+        foreach (var highScoreTextObj in _highScoreText)
+            highScoreTextObj.GetComponent<Text>().text = GameVariablesScript.HighScore.ToString();
+        _lastScoreText.text = GameVariablesScript.LastScore.ToString();
+        
+        FileServices.SaveGame();
+    }
     #endregion
 }

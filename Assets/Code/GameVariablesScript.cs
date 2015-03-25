@@ -24,4 +24,14 @@ public class GameVariablesScript : MonoBehaviour {
     public static int ScreenToStartOn = 0;
     public static int HighScore = 0;
     public static int LastScore = 0;
+
+    /* Functions */
+    public static void ResetVariables()
+    {
+        RelativePaddle = DefaultRelativePaddle;
+        SliderMovement = DefaultSliderMovement;
+        PaddleSensitivity = DefaultSensitivity/PaddleSensitivityCoeff;
+        BallSpeed = DefaultBallSpeed/BallSpeedCoeff;
+        HighScore = LastScore = 0;
+    }
 }
