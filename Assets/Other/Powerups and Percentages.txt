@@ -1,0 +1,11 @@
+Ball split * 2	- 0.02
+Extra paddle	- 0.01
+Power ball	- 0.005
+Slow ball	- 0.03
+Laser gun	- 0.01
+Wide paddle	- 0.01
+Shockwave	- 0.005
+Shield		- 0.01
+
+----------------------
+-----------	= 0.1
