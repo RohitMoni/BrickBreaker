@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Code
@@ -6,31 +7,73 @@ namespace Assets.Code
     public class PowerupManagerScript : MonoBehaviour
     {
         /* Properties */
-        public List<GameObject> PowerupTypes;
+        public GameObject PowerupPrefab;
 
+        private List<string> _powerupTypes;
         private List<GameObject> _powerups; 
         private List<float> _percentages;
 
         /* References */
         private GameObject _powerupAnchor;
+        private PaddleManagerScript _paddleManager;
 
         /* Constants */
         private const int PowerupInstancesPerType = 2;
+        private const float PowerupFallSpeed = 3f;
 
         // Use this for initialization
         void Start ()
         {
             _powerupAnchor = GameObject.Find("PowerupAnchor");
+            _paddleManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<PaddleManagerScript>();
 
-            _powerups = new List<GameObject>(PowerupTypes.Count*PowerupInstancesPerType);
-            _percentages = new List<float>(PowerupTypes.Count);
+            _powerupTypes = new List<string>();
+
+            SetUpPowerupTypes();
+
+            _powerups = new List<GameObject>(_powerupTypes.Count*PowerupInstancesPerType);
+            _percentages = new List<float>(_powerupTypes.Count);
 
             CreatePowerups();
 
-            // Fill in percentages
-            foreach (var powerup in PowerupTypes)
+            SetUpPercentages();
+        }
+
+        void SetUpPowerupTypes()
+        {
+            _powerupTypes.Add("Extra paddle");
+        }
+
+        void CreatePowerups()
+        {
+            foreach (var type in _powerupTypes)
             {
-                switch (powerup.name)
+                for (var i = 0; i < PowerupInstancesPerType; i++)
+                {
+                    var obj = Instantiate(PowerupPrefab);
+                    obj.transform.parent = _powerupAnchor.transform;
+                    obj.GetComponent<PowerupScript>().PowerupTag = type;
+
+                    ResetPowerup(obj);
+   
+                    _powerups.Add(obj);
+                }
+            }
+        }
+
+        void ResetPowerup(GameObject powerup)
+        {
+            powerup.transform.localPosition = new Vector3(0, 0, 0);
+            powerup.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
+            powerup.SetActive(false);
+        }
+
+        void SetUpPercentages()
+        {
+            // Fill in percentages
+            foreach (var type in _powerupTypes)
+            {
+                switch (type)
                 {
                     case "Ball split":
                         _percentages.Add(02f);
@@ -57,32 +100,47 @@ namespace Assets.Code
                         _percentages.Add(01f);
                         break;
                     default:
-                    {
-                        Debug.Log("Powerup not found in list!");
-                        _percentages.Add(0);
-                        break;
-                    }
+                        {
+                            Debug.Log("Powerup not found in list!");
+                            _percentages.Add(0);
+                            break;
+                        }
                 }
             }
         }
 
-        void CreatePowerups()
+        public void TriggerPowerup(GameObject powerup)
         {
-            foreach (var powerup in PowerupTypes)
+            switch (powerup.GetComponent<PowerupScript>().PowerupTag)
             {
-                for (var i = 0; i < PowerupInstancesPerType; i++)
-                {
-                    var obj = Instantiate(powerup);
-                    obj.transform.parent = _powerupAnchor.transform;
-                    obj.SetActive(false);
-                    _powerups.Add(obj);
-                }
+                case "Ball split":
+                    break;
+                case "Extra paddle":
+                    _paddleManager.CreateNewPaddle();
+                    break;
+                case "Power ball":
+                    break;
+                case "Slow ball":
+                    break;
+                case "Laser gun":
+                    break;
+                case "Wide paddle":
+                    break;
+                case "Shockwave":
+                    break;
+                case "Shield":
+                    break;
             }
+
+            ResetPowerup(powerup);
         }
 
         void Update()
         {
-            
+            foreach (var powerup in _powerups.Where(powerup => powerup.activeSelf))
+            {
+                powerup.transform.position -= new Vector3(0, PowerupFallSpeed, 0) * Time.smoothDeltaTime;
+            }
         }
     }
 }
