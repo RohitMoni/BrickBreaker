@@ -9,6 +9,7 @@ namespace Assets.Code
         public int PointValue;
         public int HealthTotal;
         public int CurrentHealth;
+        public GameObject Powerup;
 
         /* Sprites */
         public Sprite BrickHealth0, BrickHealth1, BrickHealth2, BrickHealth3;
@@ -19,25 +20,55 @@ namespace Assets.Code
         // Managers
         private GameManagerScript _gameManager;
         private BrickManagerScript _brickManager;
+        private PowerupManagerScript _powerupManager;
 
         /* Constants */
         private const int DefaultBrickHealth = 1;
 
         // Use this for initialization
-        void Start () {
-            _gameManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<GameManagerScript>();
-            _brickManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<BrickManagerScript>();
+        void Start ()
+        {
+            var managers = GameObject.FindGameObjectWithTag("Managers");
+            _gameManager = managers.GetComponent<GameManagerScript>();
+            _brickManager = managers.GetComponent<BrickManagerScript>();
+            _powerupManager = managers.GetComponent<PowerupManagerScript>();
             _brickDestroyEffect = GameObject.FindGameObjectWithTag("ParticleBrickDestroy");
             PointValue = 10;
             HealthTotal = DefaultBrickHealth;
-            CurrentHealth = DefaultBrickHealth;
-            GetComponent<SpriteRenderer>().sprite = BrickHealth0;
+
+            Reset();
         }
 
         private void Reset()
         {
             CurrentHealth = HealthTotal;
             GetComponent<SpriteRenderer>().sprite = BrickHealth0;
+            CalculatePowerup();
+        }
+
+        private void CalculatePowerup()
+        {
+            var randomNumber = UnityEngine.Random.Range(1f, 100f);
+
+            Powerup = null;
+            var sumPercent = 0f;
+
+            //for (var i = 0; i < _powerupManager.Powerups.Count; i++)
+            //{
+            //    var powerup = _powerupManager.Powerups[i];
+            //    var percentage = _powerupManager.Percentages[i];
+
+            //    sumPercent += percentage;
+            //    if (randomNumber <= sumPercent * _gameManager.PseudoRandomMultiplier)
+            //    {
+            //        Powerup = powerup;
+            //        _gameManager.PseudoRandomMultiplier = 1;
+            //        break;
+            //    }
+            //}
+
+            //if (!Powerup)
+            //    _gameManager.PseudoRandomMultiplier++;
         }
 
         public void SetBrickHealth(int value)

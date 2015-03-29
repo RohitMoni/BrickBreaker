@@ -11,6 +11,7 @@ namespace Assets.Code
         public bool IsPaused;
         public bool IsStarted;
         public bool TimerStarted;
+        public int PseudoRandomMultiplier;
 
         private int _textPointScore;
         private int _actualPointScore;
@@ -46,9 +47,9 @@ namespace Assets.Code
 
         /* Constants */
         public const int BonusPointScore = 200;
-        public const float TimeForSpeedIncrease = 30;
+        public const float TimeForSpeedIncrease = 10;
         public const float TimeForSpeedIncreaseEvent = 5f;
-        public const float TimeForComboTextShow = 2f;
+        public const float TimeForComboTextShow = 1f;
         public Vector3 ComboTextInitialScale = new Vector3(.5f, .5f, .5f);
         public Vector3 ComboTextFinalScale = new Vector3(1f, 1f, 1f);
         public const float BackgroundColourChangeSpeed = 3;
@@ -166,7 +167,7 @@ namespace Assets.Code
                 _speedIncreaseTimer += Time.smoothDeltaTime;
                 if (!_eventCreated && _speedIncreaseTimer > TimeForSpeedIncrease - TimeForSpeedIncreaseEvent)
                 {
-                    _eventManager.CreateEvent("Speed++", TimeForSpeedIncreaseEvent, 1);
+                    _eventManager.CreateEvent("+", TimeForSpeedIncreaseEvent, 1);
                     _eventCreated = true;
                 }
                 else if (_speedIncreaseTimer >= TimeForSpeedIncrease)
@@ -308,7 +309,7 @@ namespace Assets.Code
         {
             _comboText.enabled = true;
             _comboText.transform.localScale = ComboTextInitialScale;
-            _comboText.text = "Combo\nx" + comboScore;
+            _comboText.text = comboScore.ToString();
             _comboTimer = 0;
         }
 
@@ -379,6 +380,7 @@ namespace Assets.Code
             TimerStarted = false;
             _currentState = 0;
             _comboTimer = 0;
+            PseudoRandomMultiplier = 1;
 
             SetInGameMenuActive(false);
             _comboText.enabled = false;

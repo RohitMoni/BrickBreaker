@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Assets.Code;
 using UnityEngine;
 using System.Collections;
@@ -89,6 +90,7 @@ public class EventTextScript : MonoBehaviour {
         _eventText.text = textToDisplay;
         _timeToStop = timeTillStop;
         _priority = priority;
+        _backPanel.rectTransform.sizeDelta = new Vector2(textToDisplay.Count() > 1 ? 670 : 185, 185);
 
         // Enable stuff to show
         _backPanel.enabled = true;
