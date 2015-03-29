@@ -123,7 +123,7 @@ namespace Assets.Code
 
                 //CheckRings();
 
-                GoToNextLevel();
+                _paddleManager.CreateNewPaddle();
             }
 #endif
             #endregion

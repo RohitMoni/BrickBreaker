@@ -29,6 +29,9 @@ public class PaddleManagerScript : MonoBehaviour
     private EventTextScript _eventManager;
     private Slider _controlSlider;
 
+    /* Constants */
+    private const int MaxNumberOfPaddles = 4;
+
     // Use this for initialization
     void Start()
     {
@@ -96,6 +99,39 @@ public class PaddleManagerScript : MonoBehaviour
                     _paddleAnchor.transform.rotation = _paddleAnchor.transform.rotation * _currentSliderMovement;
 #endif
         }
+    }
+
+    public void CreateNewPaddle()
+    {
+        if (_paddleAnchor.transform.childCount > MaxNumberOfPaddles)
+            return;
+
+        var paddlePrime = _paddleAnchor.transform.GetChild(0);
+
+        var paddle = Instantiate(paddlePrime);
+        paddle.transform.position = paddlePrime.transform.position;
+        paddle.transform.rotation = paddlePrime.transform.rotation;
+
+        switch (_paddleAnchor.transform.childCount)
+        {
+            case 2:
+                _paddleAnchor.transform.Rotate(new Vector3(0, 0, 1), 180);
+                paddle.transform.SetParent(_paddleAnchor.transform);
+                _paddleAnchor.transform.Rotate(new Vector3(0, 0, 1), -180);
+                break;
+            case 3:
+                _paddleAnchor.transform.Rotate(new Vector3(0, 0, 1), 90);
+                paddle.transform.SetParent(_paddleAnchor.transform);
+                _paddleAnchor.transform.Rotate(new Vector3(0, 0, 1), -90);
+                break;
+            case 4:
+                _paddleAnchor.transform.Rotate(new Vector3(0, 0, 1), -90);
+                paddle.transform.SetParent(_paddleAnchor.transform);
+                _paddleAnchor.transform.Rotate(new Vector3(0, 0, 1), 90);
+                break;
+        }
+
+        paddle.transform.localScale = new Vector3(1, 1, 1);
     }
 
     public void CreateNewBall()

@@ -53,9 +53,9 @@ namespace Assets.Code
             Powerup = null;
             var sumPercent = 0f;
 
-            //for (var i = 0; i < _powerupManager.Powerups.Count; i++)
+            //for (var i = 0; i < _powerupManager.PowerupTypes.Count; i++)
             //{
-            //    var powerup = _powerupManager.Powerups[i];
+            //    var powerup = _powerupManager.PowerupTypes[i];
             //    var percentage = _powerupManager.Percentages[i];
 
             //    sumPercent += percentage;
