@@ -12,6 +12,7 @@ namespace Assets.Code
         private List<string> _powerupTypes;
         private List<GameObject> _powerups; 
         private List<float> _percentages;
+        public int PseudoRandomMultiplier;
 
         /* References */
         private GameObject _powerupAnchor;
@@ -34,9 +35,9 @@ namespace Assets.Code
             _powerups = new List<GameObject>(_powerupTypes.Count*PowerupInstancesPerType);
             _percentages = new List<float>(_powerupTypes.Count);
 
-            CreatePowerups();
-
             SetUpPercentages();
+
+            CreatePowerups();
         }
 
         void SetUpPowerupTypes()
@@ -61,7 +62,7 @@ namespace Assets.Code
             }
         }
 
-        void ResetPowerup(GameObject powerup)
+        public void ResetPowerup(GameObject powerup)
         {
             powerup.transform.localPosition = new Vector3(0, 0, 0);
             powerup.transform.localScale = new Vector3(0.8f, 0.8f, 0.8f);
@@ -79,7 +80,7 @@ namespace Assets.Code
                         _percentages.Add(02f);
                         break;
                     case "Extra paddle":
-                        _percentages.Add(01f);
+                        _percentages.Add(100f);
                         break;
                     case "Power ball":
                         _percentages.Add(0.5f);
@@ -106,6 +107,39 @@ namespace Assets.Code
                             break;
                         }
                 }
+            }
+        }
+
+        public string CalculatePowerup()
+        {
+            var randomNumber = Random.Range(1f, 100f);
+
+            var sumPercent = 0f;
+            for (var i = 0; i < _powerupTypes.Count; i++)
+            {
+                var powerup = _powerupTypes[i];
+                var percentage = _percentages[i];
+
+                sumPercent += percentage;
+                if (randomNumber <= sumPercent * PseudoRandomMultiplier)
+                {
+                    PseudoRandomMultiplier = 1;
+                    return (powerup);
+                }
+            }
+
+            PseudoRandomMultiplier++;
+            return null;
+        }
+
+        public void DropPowerup(string powerupType, Transform initialTransform)
+        {
+            foreach (var powerup in _powerups.Where(powerup => powerup.GetComponent<PowerupScript>().PowerupTag == powerupType && !powerup.activeSelf))
+            {
+                var drop = powerup;
+                drop.transform.position = initialTransform.position;
+                drop.SetActive(true);
+                break;
             }
         }
 

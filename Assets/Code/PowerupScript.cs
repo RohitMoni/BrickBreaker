@@ -21,6 +21,15 @@ namespace Assets.Code
             {
                 _powerupManager.TriggerPowerup(gameObject);
             }
+            
+        }
+
+        void OnTriggerExit2D(Collider2D other)
+        {
+            if (other.tag == "OuterRing")
+            {
+                _powerupManager.ResetPowerup(gameObject);
+            }
         }
     }
 }

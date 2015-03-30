@@ -11,7 +11,6 @@ namespace Assets.Code
         public bool IsPaused;
         public bool IsStarted;
         public bool TimerStarted;
-        public int PseudoRandomMultiplier;
 
         private int _textPointScore;
         private int _actualPointScore;
@@ -380,7 +379,6 @@ namespace Assets.Code
             TimerStarted = false;
             _currentState = 0;
             _comboTimer = 0;
-            PseudoRandomMultiplier = 1;
 
             SetInGameMenuActive(false);
             _comboText.enabled = false;

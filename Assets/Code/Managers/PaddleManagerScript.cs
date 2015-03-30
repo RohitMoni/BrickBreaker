@@ -12,6 +12,7 @@ public class PaddleManagerScript : MonoBehaviour
 #if UNITY_EDITOR
     private float _paddleSpeed;
 #endif
+    private int _numberOfActivePaddles;
     private int _controlFingerId;
     private Quaternion _currentSliderMovement;
     
@@ -42,8 +43,7 @@ public class PaddleManagerScript : MonoBehaviour
         _controlSlider = GameObject.FindGameObjectWithTag("ControlSlider").GetComponent<Slider>();
         _camera = Camera.main;
 
-        _controlFingerId = -1;
-        _currentSliderMovement = Quaternion.identity;
+        Reset();
 
 #if UNITY_EDITOR
         _paddleSpeed = 1.0f;
@@ -103,35 +103,14 @@ public class PaddleManagerScript : MonoBehaviour
 
     public void CreateNewPaddle()
     {
-        if (_paddleAnchor.transform.childCount > MaxNumberOfPaddles)
+        if (_numberOfActivePaddles >= MaxNumberOfPaddles)
             return;
 
-        var paddlePrime = _paddleAnchor.transform.GetChild(0);
-
-        var paddle = Instantiate(paddlePrime);
-        paddle.transform.position = paddlePrime.transform.position;
-        paddle.transform.rotation = paddlePrime.transform.rotation;
-
-        switch (_paddleAnchor.transform.childCount)
+        foreach (var child in _paddleAnchor.transform.Cast<Transform>().Where(child => child.tag == "Paddle" && !child.gameObject.activeSelf))
         {
-            case 2:
-                _paddleAnchor.transform.Rotate(new Vector3(0, 0, 1), 180);
-                paddle.transform.SetParent(_paddleAnchor.transform);
-                _paddleAnchor.transform.Rotate(new Vector3(0, 0, 1), -180);
-                break;
-            case 3:
-                _paddleAnchor.transform.Rotate(new Vector3(0, 0, 1), 90);
-                paddle.transform.SetParent(_paddleAnchor.transform);
-                _paddleAnchor.transform.Rotate(new Vector3(0, 0, 1), -90);
-                break;
-            case 4:
-                _paddleAnchor.transform.Rotate(new Vector3(0, 0, 1), -90);
-                paddle.transform.SetParent(_paddleAnchor.transform);
-                _paddleAnchor.transform.Rotate(new Vector3(0, 0, 1), 90);
-                break;
+            child.gameObject.SetActive(true);
+            break;
         }
-
-        paddle.transform.localScale = new Vector3(1, 1, 1);
     }
 
     public void CreateNewBall()
@@ -262,6 +241,7 @@ public class PaddleManagerScript : MonoBehaviour
         _controlSlider.value = 180;
         _controlFingerId = -1;
         _currentSliderMovement = Quaternion.identity;
+        _numberOfActivePaddles = 1;
 
         _paddleAnchor.transform.rotation = Quaternion.identity;
 
@@ -270,5 +250,12 @@ public class PaddleManagerScript : MonoBehaviour
         
         foreach (var ball in balls)
             Destroy(ball);
+
+        // Reset all paddle objects
+        foreach (Transform child in _paddleAnchor.transform)
+        {
+            child.gameObject.SetActive(false);
+        }
+        _paddleAnchor.transform.GetChild(0).gameObject.SetActive(true);
     }
 }

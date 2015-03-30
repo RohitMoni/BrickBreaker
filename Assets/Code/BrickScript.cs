@@ -9,7 +9,7 @@ namespace Assets.Code
         public int PointValue;
         public int HealthTotal;
         public int CurrentHealth;
-        public GameObject Powerup;
+        public string Powerup;
 
         /* Sprites */
         public Sprite BrickHealth0, BrickHealth1, BrickHealth2, BrickHealth3;
@@ -48,27 +48,7 @@ namespace Assets.Code
 
         private void CalculatePowerup()
         {
-            var randomNumber = UnityEngine.Random.Range(1f, 100f);
-
-            Powerup = null;
-            var sumPercent = 0f;
-
-            //for (var i = 0; i < _powerupManager.PowerupTypes.Count; i++)
-            //{
-            //    var powerup = _powerupManager.PowerupTypes[i];
-            //    var percentage = _powerupManager.Percentages[i];
-
-            //    sumPercent += percentage;
-            //    if (randomNumber <= sumPercent * _gameManager.PseudoRandomMultiplier)
-            //    {
-            //        Powerup = powerup;
-            //        _gameManager.PseudoRandomMultiplier = 1;
-            //        break;
-            //    }
-            //}
-
-            //if (!Powerup)
-            //    _gameManager.PseudoRandomMultiplier++;
+            Powerup = _powerupManager.CalculatePowerup();
         }
 
         public void SetBrickHealth(int value)
@@ -112,6 +92,9 @@ namespace Assets.Code
             // Play particle effect
             _brickDestroyEffect.GetComponent<ParticleSystem>().startColor = GetComponent<SpriteRenderer>().color;
             _brickDestroyEffect.GetComponent<ParticleSystem>().Emit((int)(transform.parent.localScale.x * 8));
+
+            // Drop powerup
+            _powerupManager.DropPowerup(Powerup, transform);
 
             // Add points
             _gameManager.AddScore(PointValue * HealthTotal);
