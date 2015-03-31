@@ -6,6 +6,7 @@ namespace Assets.Code
     {
         /* Properties */
         public Vector3 Velocity;
+        public bool PowerBall;
 
         /* References */
         private GameManagerScript _gameManager;
@@ -17,6 +18,7 @@ namespace Assets.Code
         void Start ()
         {
             //Speed = 0.03f;
+            PowerBall = false;
             
             _gameManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<GameManagerScript>();
             _paddleAnchor = GameObject.FindGameObjectWithTag("PaddleAnchor");

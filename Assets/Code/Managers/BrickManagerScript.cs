@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -22,6 +23,9 @@ namespace Assets.Code
         private bool _isShockwaving;
         private float _shockwaveTimer;
         private int _shockwaveCounter;
+        private bool _powerMode;
+        private float _powerModeTimer;
+        private bool _isFlashing;
 
         /* Consts */
         private const int NumberOfRings = 3;
@@ -34,6 +38,9 @@ namespace Assets.Code
 
         private const float ShockwaveSpeed = 0.2f;
 
+        private const float TimeForPowerMode = 5.0f;
+        private const float TimeForPowerFlashing = 2.0f;
+
         // Use this for initialization
         void Start ()
         {
@@ -41,6 +48,8 @@ namespace Assets.Code
             _brickAnchor = GameObject.FindGameObjectWithTag("BrickAnchor");
             _brickRings = new List<BrickRing>();
             BrickHealth = 1;
+            _powerMode = false;
+            _isFlashing = false;
         }
 	
         // Update is called once per frame
@@ -72,6 +81,22 @@ namespace Assets.Code
                 // Rotate rings
                 _brickRings[i].Anchor.transform.Rotate(Vector3.forward, RingRotationSpeed * ringRotation);
                 ringRotation *= -1;
+            }
+
+            // Power Mode
+            if (_powerMode)
+            {
+                _powerModeTimer += Time.smoothDeltaTime;
+                if (_powerModeTimer > TimeForPowerMode - TimeForPowerFlashing && !_isFlashing)
+                {
+                    _isFlashing = true;
+                    StartCoroutine(FlashBallColour(5, TimeForPowerFlashing/5/2, TimeForPowerFlashing/5/2));
+                }
+
+                if (_powerModeTimer > TimeForPowerMode)
+                {
+                    SetPowerModeEnabled(false);
+                }
             }
 
             // shockwave
@@ -156,6 +181,24 @@ namespace Assets.Code
             _shockwaveTimer = 0;
             _gameManager.StartShake();
         }
+
+        public void SetPowerModeEnabled(bool powerModeIsEnabled)
+        {
+            foreach (var ring in _brickRings)
+            {
+                foreach (Transform brick in ring.Anchor.transform)
+                {
+                    brick.gameObject.GetComponent<Collider2D>().isTrigger = powerModeIsEnabled;
+                }
+            }
+
+            _powerModeTimer = 0;
+            _powerMode = powerModeIsEnabled;
+            _isFlashing = !_powerMode;
+            var balls = GameObject.FindGameObjectsWithTag("Ball");
+            foreach (var ball in balls)
+                ball.GetComponent<SpriteRenderer>().color = _powerMode ? Color.red : Color.white;
+        }
         
         void CreateNewBrickRing()
         {
@@ -166,6 +209,33 @@ namespace Assets.Code
             anchor.transform.parent = _brickAnchor.transform;
 
             _brickRings.Add(gO);
+        }
+
+        private IEnumerator FlashBallColour(int nTimes, float timeOn, float timeOff)
+        {
+            var balls = GameObject.FindGameObjectsWithTag("Ball");
+            while (nTimes > 0)
+            {
+                foreach (var ball in balls.Where(ball => ball))
+                    ball.GetComponent<SpriteRenderer>().color = Color.white;
+
+                if (!_isFlashing)
+                    yield break;
+
+                yield return new WaitForSeconds(timeOn);
+
+                foreach (var ball in balls.Where(ball => ball))
+                    ball.GetComponent<SpriteRenderer>().color = Color.red;
+
+                if (!_isFlashing)
+                    yield break;
+
+                yield return new WaitForSeconds(timeOff);
+                nTimes--;
+            }
+
+            foreach (var ball in balls.Where(ball => ball))
+                ball.GetComponent<SpriteRenderer>().color = Color.white;
         }
 
         void ResetBrickRing(BrickRing ring)
@@ -210,6 +280,4 @@ namespace Assets.Code
             }
         }
     }
-
-    
 }

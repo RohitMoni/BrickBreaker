@@ -12,11 +12,12 @@ namespace Assets.Code
         private List<string> _powerupTypes;
         private List<GameObject> _powerups; 
         private List<float> _percentages;
-        public int PseudoRandomMultiplier;
+        private int _pseudoRandomMultiplier;
 
         /* References */
         private GameObject _powerupAnchor;
         private PaddleManagerScript _paddleManager;
+        private BrickManagerScript _brickManager;
 
         /* Constants */
         private const int PowerupInstancesPerType = 2;
@@ -27,6 +28,7 @@ namespace Assets.Code
         {
             _powerupAnchor = GameObject.Find("PowerupAnchor");
             _paddleManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<PaddleManagerScript>();
+            _brickManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<BrickManagerScript>();
 
             _powerupTypes = new List<string>();
 
@@ -43,6 +45,7 @@ namespace Assets.Code
         void SetUpPowerupTypes()
         {
             _powerupTypes.Add("Extra paddle");
+            _powerupTypes.Add("Shockwave");
         }
 
         void CreatePowerups()
@@ -77,28 +80,28 @@ namespace Assets.Code
                 switch (type)
                 {
                     case "Ball split":
-                        _percentages.Add(02f);
+                        _percentages.Add(0.0f);
                         break;
                     case "Extra paddle":
-                        _percentages.Add(100f);
+                        _percentages.Add(0.0f);
                         break;
                     case "Power ball":
-                        _percentages.Add(0.5f);
+                        _percentages.Add(0.0f);
                         break;
                     case "Slow ball":
-                        _percentages.Add(03f);
+                        _percentages.Add(0.0f);
                         break;
                     case "Laser gun":
-                        _percentages.Add(01f);
+                        _percentages.Add(0.0f);
                         break;
                     case "Wide paddle":
-                        _percentages.Add(01f);
+                        _percentages.Add(0.0f);
                         break;
                     case "Shockwave":
-                        _percentages.Add(0.5f);
+                        _percentages.Add(0.0f);
                         break;
                     case "Shield":
-                        _percentages.Add(01f);
+                        _percentages.Add(0.0f);
                         break;
                     default:
                         {
@@ -121,14 +124,14 @@ namespace Assets.Code
                 var percentage = _percentages[i];
 
                 sumPercent += percentage;
-                if (randomNumber <= sumPercent * PseudoRandomMultiplier)
+                if (randomNumber <= sumPercent * _pseudoRandomMultiplier)
                 {
-                    PseudoRandomMultiplier = 1;
+                    _pseudoRandomMultiplier = 1;
                     return (powerup);
                 }
             }
 
-            PseudoRandomMultiplier++;
+            _pseudoRandomMultiplier++;
             return null;
         }
 
@@ -153,14 +156,17 @@ namespace Assets.Code
                     _paddleManager.CreateNewPaddle();
                     break;
                 case "Power ball":
+                    _brickManager.SetPowerModeEnabled(true);
                     break;
                 case "Slow ball":
                     break;
                 case "Laser gun":
                     break;
                 case "Wide paddle":
+
                     break;
                 case "Shockwave":
+                    _brickManager.StartShockwave();
                     break;
                 case "Shield":
                     break;

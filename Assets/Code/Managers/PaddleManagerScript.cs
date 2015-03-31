@@ -32,6 +32,8 @@ public class PaddleManagerScript : MonoBehaviour
 
     /* Constants */
     private const int MaxNumberOfPaddles = 4;
+    private const float MaxPaddleWidthScale = 1.5f;
+    private const float PaddleWidthIncrease = 0.1f;
 
     // Use this for initialization
     void Start()
@@ -99,6 +101,49 @@ public class PaddleManagerScript : MonoBehaviour
                     _paddleAnchor.transform.rotation = _paddleAnchor.transform.rotation * _currentSliderMovement;
 #endif
         }
+    }
+
+    public void WidenPaddles()
+    {
+        
+    }
+
+    private IEnumerator StretchSquashPaddles(float widthIncrease, int nSteps, float timePerStep)
+    {
+        var balls = GameObject.FindGameObjectsWithTag("Ball");
+        var currentStep = 0;
+        var i = 0;
+        for (; i < nSteps/2; i++)
+        {
+            
+        }
+        for (; i < nSteps; i++)
+        {
+            
+        }
+
+        //while (currentStep < nSteps/2)
+        //{
+            //foreach (var ball in balls.Where(ball => ball))
+            //    ball.GetComponent<SpriteRenderer>().color = Color.white;
+
+            //if (!_isFlashing)
+            //    yield break;
+
+            //yield return new WaitForSeconds(timeOn);
+
+            //foreach (var ball in balls.Where(ball => ball))
+            //    ball.GetComponent<SpriteRenderer>().color = Color.red;
+
+            //if (!_isFlashing)
+            //    yield break;
+
+            //yield return new WaitForSeconds(timeOff);
+            //nSteps--;
+        //}
+
+        //foreach (var ball in balls.Where(ball => ball))
+        //    ball.GetComponent<SpriteRenderer>().color = Color.white;
     }
 
     public void CreateNewPaddle()

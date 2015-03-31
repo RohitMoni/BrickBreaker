@@ -135,5 +135,19 @@ namespace Assets.Code
                 }
             }
         }
+
+        public void OnTriggerEnter2D(Collider2D other)
+        {
+            if (other.tag == "Ball")
+            {
+                var rotationVel = -other.gameObject.GetComponent<BallScript>().Velocity.normalized;
+                var angle = Mathf.Atan2(rotationVel.y, rotationVel.x) * Mathf.Rad2Deg;
+                angle += 90;
+                var rotation = Quaternion.Euler(0, 0, angle);
+
+                DestroyBrick(rotation);
+                _brickManager.CheckRings();
+            }
+        }
     }
 }
