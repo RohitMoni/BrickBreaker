@@ -194,21 +194,10 @@ namespace Assets.Code
 
             _powerModeTimer = 0;
             _powerMode = powerModeIsEnabled;
-            _isFlashing = !_powerMode;
+            _isFlashing = false;
             var balls = GameObject.FindGameObjectsWithTag("Ball");
             foreach (var ball in balls)
                 ball.GetComponent<SpriteRenderer>().color = _powerMode ? Color.red : Color.white;
-        }
-        
-        void CreateNewBrickRing()
-        {
-            var gO = new BrickRing(12, BrickHealth, this);
-            var anchor = gO.Anchor;
-            anchor.transform.position = new Vector3(0, 0, -2);
-            anchor.transform.localScale = new Vector3(InitialScale, InitialScale, InitialScale);
-            anchor.transform.parent = _brickAnchor.transform;
-
-            _brickRings.Add(gO);
         }
 
         private IEnumerator FlashBallColour(int nTimes, float timeOn, float timeOff)
@@ -236,6 +225,17 @@ namespace Assets.Code
 
             foreach (var ball in balls.Where(ball => ball))
                 ball.GetComponent<SpriteRenderer>().color = Color.white;
+        }
+
+        void CreateNewBrickRing()
+        {
+            var gO = new BrickRing(12, BrickHealth, this);
+            var anchor = gO.Anchor;
+            anchor.transform.position = new Vector3(0, 0, -2);
+            anchor.transform.localScale = new Vector3(InitialScale, InitialScale, InitialScale);
+            anchor.transform.parent = _brickAnchor.transform;
+
+            _brickRings.Add(gO);
         }
 
         void ResetBrickRing(BrickRing ring)

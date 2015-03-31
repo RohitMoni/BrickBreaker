@@ -15,6 +15,8 @@ public class PaddleManagerScript : MonoBehaviour
     private int _numberOfActivePaddles;
     private int _controlFingerId;
     private Quaternion _currentSliderMovement;
+    private float _currentPaddleWidth;
+    private IEnumerator _widenCoroutine;
     
     /* References */
     // Managers
@@ -105,45 +107,42 @@ public class PaddleManagerScript : MonoBehaviour
 
     public void WidenPaddles()
     {
-        
+        if (!(_currentPaddleWidth < MaxPaddleWidthScale)) return;
+
+        if (_widenCoroutine != null)
+            StopCoroutine(_widenCoroutine);
+
+        _currentPaddleWidth = _currentPaddleWidth + PaddleWidthIncrease;
+        _widenCoroutine = StretchSquashPaddles(_currentPaddleWidth, 5, 0.01f);
+        StartCoroutine(_widenCoroutine);
     }
 
-    private IEnumerator StretchSquashPaddles(float widthIncrease, int nSteps, float timePerStep)
+    private IEnumerator StretchSquashPaddles(float finalWidth, int nSteps, float timePerStep)
     {
-        var balls = GameObject.FindGameObjectsWithTag("Ball");
-        var currentStep = 0;
-        var i = 0;
-        for (; i < nSteps/2; i++)
+        var paddles = GameObject.FindGameObjectsWithTag("Paddle");
+
+        var scaleDifference = finalWidth - paddles[0].transform.localScale.x;
+        var scaleChange = scaleDifference/nSteps;
+
+        while (paddles[0].transform.localScale.x < finalWidth + scaleDifference)
         {
-            
+            foreach (var paddle in paddles)
+                paddle.transform.localScale = paddle.transform.localScale + new Vector3(scaleChange*2, 0, 0);
+
+            yield return new WaitForSeconds(timePerStep);
         }
-        for (; i < nSteps; i++)
+        while (paddles[0].transform.localScale.x > finalWidth)
         {
-            
+            foreach (var paddle in paddles)
+                paddle.transform.localScale = paddle.transform.localScale - new Vector3(scaleChange, 0, 0);
+
+            yield return new WaitForSeconds(timePerStep);
         }
 
-        //while (currentStep < nSteps/2)
-        //{
-            //foreach (var ball in balls.Where(ball => ball))
-            //    ball.GetComponent<SpriteRenderer>().color = Color.white;
+        foreach (var paddle in paddles)
+            paddle.transform.localScale = new Vector3(_currentPaddleWidth, 1, 1);
 
-            //if (!_isFlashing)
-            //    yield break;
-
-            //yield return new WaitForSeconds(timeOn);
-
-            //foreach (var ball in balls.Where(ball => ball))
-            //    ball.GetComponent<SpriteRenderer>().color = Color.red;
-
-            //if (!_isFlashing)
-            //    yield break;
-
-            //yield return new WaitForSeconds(timeOff);
-            //nSteps--;
-        //}
-
-        //foreach (var ball in balls.Where(ball => ball))
-        //    ball.GetComponent<SpriteRenderer>().color = Color.white;
+        _widenCoroutine = null;
     }
 
     public void CreateNewPaddle()
@@ -289,6 +288,8 @@ public class PaddleManagerScript : MonoBehaviour
         _numberOfActivePaddles = 1;
 
         _paddleAnchor.transform.rotation = Quaternion.identity;
+        _currentPaddleWidth = 1;
+        _widenCoroutine = null;
 
         // Remove all balls
         var balls = GameObject.FindGameObjectsWithTag("Ball");

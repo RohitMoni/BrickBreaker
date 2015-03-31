@@ -163,7 +163,7 @@ namespace Assets.Code
                 case "Laser gun":
                     break;
                 case "Wide paddle":
-
+                    _paddleManager.WidenPaddles();
                     break;
                 case "Shockwave":
                     _brickManager.StartShockwave();

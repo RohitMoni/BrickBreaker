@@ -122,7 +122,7 @@ namespace Assets.Code
 
                 //CheckRings();
 
-                _brickManager.SetPowerModeEnabled(true);
+                _paddleManager.WidenPaddles();
             }
 #endif
             #endregion
