@@ -6,9 +6,17 @@ namespace Assets.Code
 {
     public class PowerupManagerScript : MonoBehaviour
     {
-        /* Properties */
+        /* Editor filled */
         public GameObject PowerupPrefab;
 
+        public Sprite BallSplitSprite;
+        public Sprite ExtraPaddleSprite;
+        public Sprite PowerBallSprite;
+        public Sprite ShockwaveSprite;
+        public Sprite SlowBallSprite;
+        public Sprite WidePaddleSprite;
+
+        /* Properties */
         private List<string> _powerupTypes;
         private List<GameObject> _powerups; 
         private List<float> _percentages;
@@ -16,17 +24,19 @@ namespace Assets.Code
 
         /* References */
         private GameObject _powerupAnchor;
+        private GameManagerScript _gameManager;
         private PaddleManagerScript _paddleManager;
         private BrickManagerScript _brickManager;
 
         /* Constants */
         private const int PowerupInstancesPerType = 2;
-        private const float PowerupFallSpeed = 3f;
+        private const float PowerupFallSpeed = 2f;
 
         // Use this for initialization
         void Start ()
         {
             _powerupAnchor = GameObject.Find("PowerupAnchor");
+            _gameManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<GameManagerScript>();
             _paddleManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<PaddleManagerScript>();
             _brickManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<BrickManagerScript>();
 
@@ -46,6 +56,9 @@ namespace Assets.Code
         {
             _powerupTypes.Add("Extra paddle");
             _powerupTypes.Add("Shockwave");
+            _powerupTypes.Add("Power ball");
+            _powerupTypes.Add("Wide paddle");
+            _powerupTypes.Add("Slow ball");
         }
 
         void CreatePowerups()
@@ -57,6 +70,34 @@ namespace Assets.Code
                     var obj = Instantiate(PowerupPrefab);
                     obj.transform.parent = _powerupAnchor.transform;
                     obj.GetComponent<PowerupScript>().PowerupTag = type;
+
+                    switch (type)
+                    {
+                        case "Ball split":
+                            obj.GetComponent<SpriteRenderer>().sprite = BallSplitSprite;
+                            break;
+                        case "Extra paddle":
+                            obj.GetComponent<SpriteRenderer>().sprite = ExtraPaddleSprite;
+                            break;
+                        case "Power ball":
+                            obj.GetComponent<SpriteRenderer>().sprite = PowerBallSprite;
+                            break;
+                        case "Slow ball":
+                            obj.GetComponent<SpriteRenderer>().sprite = SlowBallSprite;
+                            break;
+                        case "Laser gun":
+                            obj.GetComponent<SpriteRenderer>().sprite = BallSplitSprite;
+                            break;
+                        case "Wide paddle":
+                            obj.GetComponent<SpriteRenderer>().sprite = WidePaddleSprite;
+                            break;
+                        case "Shockwave":
+                            obj.GetComponent<SpriteRenderer>().sprite = ShockwaveSprite;
+                            break;
+                        case "Shield":
+                            obj.GetComponent<SpriteRenderer>().sprite = BallSplitSprite;
+                            break;
+                    }
 
                     ResetPowerup(obj);
    
@@ -80,28 +121,28 @@ namespace Assets.Code
                 switch (type)
                 {
                     case "Ball split":
-                        _percentages.Add(0.0f);
+                        _percentages.Add(4f);
                         break;
                     case "Extra paddle":
-                        _percentages.Add(0.0f);
+                        _percentages.Add(3f);
                         break;
                     case "Power ball":
-                        _percentages.Add(0.0f);
+                        _percentages.Add(1f);
                         break;
                     case "Slow ball":
-                        _percentages.Add(0.0f);
+                        _percentages.Add(2f);
                         break;
                     case "Laser gun":
-                        _percentages.Add(0.0f);
+                        _percentages.Add(2f);
                         break;
                     case "Wide paddle":
-                        _percentages.Add(0.0f);
+                        _percentages.Add(2f);
                         break;
                     case "Shockwave":
-                        _percentages.Add(0.0f);
+                        _percentages.Add(1f);
                         break;
                     case "Shield":
-                        _percentages.Add(0.0f);
+                        _percentages.Add(2f);
                         break;
                     default:
                         {
@@ -159,6 +200,7 @@ namespace Assets.Code
                     _brickManager.SetPowerModeEnabled(true);
                     break;
                 case "Slow ball":
+                    _gameManager.DecreaseBallSpeed();
                     break;
                 case "Laser gun":
                     break;

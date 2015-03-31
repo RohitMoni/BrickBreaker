@@ -46,7 +46,7 @@ namespace Assets.Code
 
         /* Constants */
         public const int BonusPointScore = 200;
-        public const float TimeForSpeedIncrease = 10;
+        public const float TimeForSpeedIncrease = 30;
         public const float TimeForSpeedIncreaseEvent = 5f;
         public const float TimeForComboTextShow = 1f;
         public Vector3 ComboTextInitialScale = new Vector3(.5f, .5f, .5f);
@@ -323,6 +323,14 @@ namespace Assets.Code
             currentSpeed++;
 
             currentSpeed = Math.Min(currentSpeed, GameVariablesScript.MaxBallSpeed);
+            GameVariablesScript.BallSpeed = currentSpeed / GameVariablesScript.BallSpeedCoeff;
+        }
+
+        public void DecreaseBallSpeed()
+        {
+            var currentSpeed = GameVariablesScript.BallSpeed * GameVariablesScript.BallSpeedCoeff;
+            currentSpeed = Math.Max(GameVariablesScript.MinBallSpeed, currentSpeed - 1);
+
             GameVariablesScript.BallSpeed = currentSpeed / GameVariablesScript.BallSpeedCoeff;
         }
 

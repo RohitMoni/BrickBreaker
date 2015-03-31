@@ -300,6 +300,7 @@ public class PaddleManagerScript : MonoBehaviour
         // Reset all paddle objects
         foreach (Transform child in _paddleAnchor.transform)
         {
+            child.localScale = new Vector3(1, 1, 1);
             child.gameObject.SetActive(false);
         }
         _paddleAnchor.transform.GetChild(0).gameObject.SetActive(true);
