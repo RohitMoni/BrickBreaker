@@ -121,28 +121,28 @@ namespace Assets.Code
                 switch (type)
                 {
                     case "Ball split":
-                        _percentages.Add(4f);
+                        _percentages.Add(2f);
                         break;
                     case "Extra paddle":
-                        _percentages.Add(3f);
+                        _percentages.Add(1.5f);
                         break;
                     case "Power ball":
-                        _percentages.Add(1f);
+                        _percentages.Add(0.5f);
                         break;
                     case "Slow ball":
-                        _percentages.Add(2f);
-                        break;
-                    case "Laser gun":
-                        _percentages.Add(2f);
-                        break;
-                    case "Wide paddle":
-                        _percentages.Add(2f);
-                        break;
-                    case "Shockwave":
                         _percentages.Add(1f);
                         break;
+                    case "Laser gun":
+                        _percentages.Add(1f);
+                        break;
+                    case "Wide paddle":
+                        _percentages.Add(1f);
+                        break;
+                    case "Shockwave":
+                        _percentages.Add(0.5f);
+                        break;
                     case "Shield":
-                        _percentages.Add(2f);
+                        _percentages.Add(1f);
                         break;
                     default:
                         {

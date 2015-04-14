@@ -112,7 +112,7 @@ namespace Assets.Code
                     foreach (Transform brick in ring.Anchor.transform)
                     {
                         if (brick.gameObject.activeSelf)
-                            brick.GetComponent<BrickScript>().DestroyBrick();
+                            brick.GetComponent<BrickScript>().DestroyBrick(false);
                     }
 
                     // Reset Timer and Increment counter

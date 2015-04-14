@@ -10,6 +10,7 @@ namespace Assets.Code
 
         /* References */
         private GameManagerScript _gameManager;
+        private SoundManagerScript _soundManager;
 
         // Anchors
         private GameObject _paddleAnchor;
@@ -21,6 +22,7 @@ namespace Assets.Code
             PowerBall = false;
             
             _gameManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<GameManagerScript>();
+            _soundManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<SoundManagerScript>();
             _paddleAnchor = GameObject.FindGameObjectWithTag("PaddleAnchor");
 
             transform.parent = _paddleAnchor.transform;
@@ -47,7 +49,10 @@ namespace Assets.Code
             ApplyVelocity(appliedVelocity);
 
             if (collision2D.gameObject.tag == "Paddle")
+            {
                 _gameManager.ResetComboValue();
+                _soundManager.ResetBrickCollideCount();
+            }
         }
     }
 }

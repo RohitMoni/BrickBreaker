@@ -72,7 +72,7 @@ public class SoundManagerScript : MonoBehaviour {
     {
         _brickCollideCount++;
 
-        var soundEffectIndex = Math.Min(_brickCollideCount, BrickCollideSes.Count()); // This is the index of the sound effect we should play
+        var soundEffectIndex = Math.Min(_brickCollideCount, BrickCollideSes.Count()-1); // This is the index of the sound effect we should play
 
         _brickCollideSource[_brickCollideCount%3].PlayOneShot(BrickCollideSes[soundEffectIndex]);
     }

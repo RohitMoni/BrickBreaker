@@ -21,6 +21,7 @@ namespace Assets.Code
         private GameManagerScript _gameManager;
         private BrickManagerScript _brickManager;
         private PowerupManagerScript _powerupManager;
+        private SoundManagerScript _soundManager;
 
         /* Constants */
         private const int DefaultBrickHealth = 1;
@@ -32,6 +33,7 @@ namespace Assets.Code
             _gameManager = managers.GetComponent<GameManagerScript>();
             _brickManager = managers.GetComponent<BrickManagerScript>();
             _powerupManager = managers.GetComponent<PowerupManagerScript>();
+            _soundManager = managers.GetComponent<SoundManagerScript>();
             _brickDestroyEffect = GameObject.FindGameObjectWithTag("ParticleBrickDestroy");
             PointValue = 10;
             HealthTotal = DefaultBrickHealth;
@@ -77,7 +79,7 @@ namespace Assets.Code
             }
         }
 
-        public void DestroyBrick(Quaternion particleRotation =new Quaternion())
+        public void DestroyBrick(bool powerupDrop =true, Quaternion particleRotation =new Quaternion())
         {
             if (particleRotation.z == 0)
                 particleRotation = Quaternion.identity;
@@ -94,7 +96,8 @@ namespace Assets.Code
             _brickDestroyEffect.GetComponent<ParticleSystem>().Emit((int)(transform.parent.localScale.x * 8));
 
             // Drop powerup
-            _powerupManager.DropPowerup(Powerup, transform);
+            if (powerupDrop)
+                _powerupManager.DropPowerup(Powerup, transform);
 
             // Add points
             _gameManager.AddScore(PointValue * HealthTotal);
@@ -110,6 +113,7 @@ namespace Assets.Code
             if (collision2D.gameObject.tag == "Ball")
             {
                 CurrentHealth--;
+                _soundManager.PlayBrickIsHitSound();
 
                 switch (CurrentHealth)
                 {
@@ -128,7 +132,7 @@ namespace Assets.Code
                         angle += 90;
                         var rotation = Quaternion.Euler(0, 0, angle);
 
-                        DestroyBrick(rotation);
+                        DestroyBrick(true, rotation);
                         _brickManager.CheckRings();
                         
                         break;
@@ -140,12 +144,13 @@ namespace Assets.Code
         {
             if (other.tag == "Ball")
             {
+                _soundManager.PlayBrickIsHitSound();
                 var rotationVel = -other.gameObject.GetComponent<BallScript>().Velocity.normalized;
                 var angle = Mathf.Atan2(rotationVel.y, rotationVel.x) * Mathf.Rad2Deg;
                 angle += 90;
                 var rotation = Quaternion.Euler(0, 0, angle);
 
-                DestroyBrick(rotation);
+                DestroyBrick(true, rotation);
                 _brickManager.CheckRings();
             }
         }
