@@ -11,6 +11,7 @@ namespace Assets.Code
     {
         /* References */
         private GameManagerScript _gameManager;
+        private SoundManagerScript _soundManager;
 
         private GameObject _brickAnchor;
         public GameObject BrickPrefab;
@@ -45,6 +46,7 @@ namespace Assets.Code
         void Start ()
         {
             _gameManager = GetComponent<GameManagerScript>();
+            _soundManager = GetComponent<SoundManagerScript>();
             _brickAnchor = GameObject.FindGameObjectWithTag("BrickAnchor");
             _brickRings = new List<BrickRing>();
             BrickHealth = 1;
@@ -180,6 +182,7 @@ namespace Assets.Code
             _isShockwaving = true;
             _shockwaveTimer = 0;
             _gameManager.StartShake();
+            _soundManager.PlayShockwaveSound();
         }
 
         public void SetPowerModeEnabled(bool powerModeIsEnabled)

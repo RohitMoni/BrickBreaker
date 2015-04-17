@@ -51,6 +51,7 @@ namespace Assets.Code
             if (collision2D.gameObject.tag == "Paddle")
             {
                 _gameManager.ResetComboValue();
+                _soundManager.PlayBallHitsPaddleSound();
                 _soundManager.ResetBrickCollideCount();
             }
         }

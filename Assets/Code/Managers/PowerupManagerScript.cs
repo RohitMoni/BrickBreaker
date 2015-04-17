@@ -27,6 +27,7 @@ namespace Assets.Code
         private GameManagerScript _gameManager;
         private PaddleManagerScript _paddleManager;
         private BrickManagerScript _brickManager;
+        private SoundManagerScript _soundManager;
 
         /* Constants */
         private const int PowerupInstancesPerType = 2;
@@ -39,6 +40,7 @@ namespace Assets.Code
             _gameManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<GameManagerScript>();
             _paddleManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<PaddleManagerScript>();
             _brickManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<BrickManagerScript>();
+            _soundManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<SoundManagerScript>();
 
             _powerupTypes = new List<string>();
 
@@ -189,6 +191,8 @@ namespace Assets.Code
 
         public void TriggerPowerup(GameObject powerup)
         {
+            _soundManager.PlayPowerupSound();
+
             switch (powerup.GetComponent<PowerupScript>().PowerupTag)
             {
                 case "Ball split":

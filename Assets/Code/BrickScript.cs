@@ -97,7 +97,10 @@ namespace Assets.Code
 
             // Drop powerup
             if (powerupDrop)
+            {
                 _powerupManager.DropPowerup(Powerup, transform);
+                _soundManager.PlayBrickBreakSound();
+            }
 
             // Add points
             _gameManager.AddScore(PointValue * HealthTotal);

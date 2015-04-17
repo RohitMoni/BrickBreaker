@@ -11,6 +11,7 @@ namespace Assets.Code
 
         /* References */
         private GameManagerScript _gameManager;
+        private SoundManagerScript _soundManager;
         private SpriteRenderer _innerRingFlash;
 
         /* Constants */
@@ -20,6 +21,7 @@ namespace Assets.Code
         void Start ()
         {
             _gameManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<GameManagerScript>();
+            _soundManager = GameObject.FindGameObjectWithTag("Managers").GetComponent<SoundManagerScript>();
             _innerRingFlash = transform.GetChild(0).GetComponent<SpriteRenderer>();
 
             _currentLevel = -1;
@@ -83,6 +85,7 @@ namespace Assets.Code
                 _gameManager.AddScore(GameManagerScript.BonusPointScore);
                 _innerRingFlash.enabled = true;
                 IncreaseHitCounter();
+                _soundManager.PlayCentreIsHitSound();
             }
         }
     }

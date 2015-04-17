@@ -153,6 +153,7 @@ public class PaddleManagerScript : MonoBehaviour
         foreach (var child in _paddleAnchor.transform.Cast<Transform>().Where(child => child.tag == "Paddle" && !child.gameObject.activeSelf))
         {
             child.gameObject.SetActive(true);
+            child.localScale = _paddleAnchor.transform.GetChild(0).transform.localScale;
             break;
         }
     }
