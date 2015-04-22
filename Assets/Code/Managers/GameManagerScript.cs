@@ -21,7 +21,6 @@ namespace Assets.Code
         private float _comboValue;
         private float _comboTimer;
         private int _currentLevel;
-        private Vector3 _zeroAcceleraton;
 
         // Camera shake variables
         private Vector3 _cameraOriginalPosition;
@@ -34,7 +33,6 @@ namespace Assets.Code
         private Camera _camera;
         private PaddleManagerScript _paddleManager;
         private BrickManagerScript  _brickManager;
-        private SoundManagerScript _soundManager;
         private EventTextScript _eventManager;
         private GameObject _inGameMenu;
         private GameObject _controlSlider;
@@ -67,7 +65,6 @@ namespace Assets.Code
             _eventCreated = false;
             _comboTimer = 0;
             _backgroundColourIndex = 1;
-            _zeroAcceleraton = Input.acceleration;
             _currentLevel = 1;
 
             // Camera shake
@@ -75,7 +72,6 @@ namespace Assets.Code
             
             _paddleManager = GetComponent<PaddleManagerScript>();
             _brickManager = GetComponent<BrickManagerScript>();
-            _soundManager = GetComponent<SoundManagerScript>();
             _eventManager = GameObject.FindGameObjectWithTag("EventText").GetComponent<EventTextScript>();
             _inGameMenu = GameObject.FindGameObjectWithTag("InGameMenu");
             _controlSlider = GameObject.FindGameObjectWithTag("ControlSlider");
@@ -367,7 +363,7 @@ namespace Assets.Code
             IsPaused = !IsPaused;
             SetInGameMenuActive(IsPaused);
             SetPaddleMovementSliderActive(!IsPaused && GameVariablesScript.SliderMovement);
-            _soundManager.ToggleBackgroundMusic();
+            BackgroundMusicScript.ToggleBackgroundMusic();
         }
 
         private void SetInGameMenuActive(bool active)

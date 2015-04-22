@@ -5,7 +5,6 @@ using UnityEngine;
 public class SoundManagerScript : MonoBehaviour {
 
     /* Properties */
-    public AudioClip BackgroundMusic;
     public AudioClip BallHitsPaddleSe;
     public AudioClip BrickBreakingSe;
     public AudioClip CentreHitSe;
@@ -16,7 +15,6 @@ public class SoundManagerScript : MonoBehaviour {
     private int _brickCollideCount;
 
     /* References */
-    private AudioSource _backgroundSource;
     private AudioSource _midLevelSource;
     private AudioSource _midLevelSource2;
     private AudioSource[] _brickCollideSource;
@@ -26,7 +24,6 @@ public class SoundManagerScript : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
 	{
-	    _backgroundSource = GameObject.FindGameObjectWithTag("MainCamera").transform.FindChild("BackgroundSound").GetComponent<AudioSource>();
         _midLevelSource = GameObject.FindGameObjectWithTag("MainCamera").transform.FindChild("MidLevelSound").GetComponent<AudioSource>();
         _midLevelSource2 = GameObject.FindGameObjectWithTag("MainCamera").transform.FindChild("MidLevelSound2").GetComponent<AudioSource>();
         _brickCollideSource = new AudioSource[3]
@@ -35,25 +32,7 @@ public class SoundManagerScript : MonoBehaviour {
 	        GameObject.FindGameObjectWithTag("MainCamera").transform.FindChild("BrickCollide2").GetComponent<AudioSource>(),
 	        GameObject.FindGameObjectWithTag("MainCamera").transform.FindChild("BrickCollide3").GetComponent<AudioSource>()
 	    };
-
-	    if (BackgroundMusic)
-	    {
-	        _backgroundSource.clip = BackgroundMusic;
-	        _backgroundSource.loop = true;
-            _backgroundSource.Play();
-	    }
 	}
-
-    public void ToggleBackgroundMusic()
-    {
-        if (!_backgroundSource)
-            return;
-
-        if (_backgroundSource.isPlaying)
-            _backgroundSource.Pause();
-        else
-            _backgroundSource.Play();
-    }   
 
     public void PlayBallHitsPaddleSound()
     {

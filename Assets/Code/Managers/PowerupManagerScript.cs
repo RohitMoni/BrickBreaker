@@ -126,7 +126,7 @@ namespace Assets.Code
                         _percentages.Add(2f);
                         break;
                     case "Extra paddle":
-                        _percentages.Add(1.5f);
+                        _percentages.Add(1f);
                         break;
                     case "Power ball":
                         _percentages.Add(0.5f);
