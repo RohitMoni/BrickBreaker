@@ -73,7 +73,7 @@ public class MainMenuManagerScript : MonoBehaviour {
 	        _timer = Math.Min(_timer, CameraShiftTime);
 
             // shift here
-	        var endPosition = new Vector3( _cameraShiftingTo*1080, 0, -10);
+	        var endPosition = new Vector3( _cameraShiftingTo*Screen.width, 0, -10);
             _camera.transform.position = Vector3.Lerp(_shiftStartPosition, endPosition, _timer / CameraShiftTime);
 
             // Check to see if we stop shifting
