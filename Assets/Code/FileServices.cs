@@ -59,6 +59,9 @@ namespace Assets.Code
         {
             var data = LoadFile(GameVariablesScript.GameFile);
 
+            if (data == null)
+                GameVariablesScript.HighScore = 0;
+
             foreach (var line in data.Split('|'))
             {
                 var location = line.IndexOf(':');

@@ -41,4 +41,9 @@ public class BackgroundMusicScript : MonoBehaviour {
         else
             Instance._backgroundMusicSource.UnPause();
     }
+
+    public static void PlayBackgroundMusic()
+    {
+        Instance._backgroundMusicSource.UnPause();
+    }
 }
