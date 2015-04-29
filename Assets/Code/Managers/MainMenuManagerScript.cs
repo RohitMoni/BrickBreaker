@@ -118,6 +118,9 @@ public class MainMenuManagerScript : MonoBehaviour {
         //    }
         //}
         #endregion
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+            Application.Quit();
     }
 
     public void StartGame()
