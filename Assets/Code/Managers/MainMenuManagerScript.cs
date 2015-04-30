@@ -60,6 +60,7 @@ public class MainMenuManagerScript : MonoBehaviour {
 	    _sliderMovementToggle.isOn = GameVariablesScript.SliderMovement;
 	    _sensitivitySlider.value = GameVariablesScript.PaddleSensitivity*GameVariablesScript.PaddleSensitivityCoeff;
 	    _ballSpeedSlider.value = GameVariablesScript.BallSpeed*GameVariablesScript.BallSpeedCoeff;
+        BackgroundMusicScript.SetBackgroundMusicMute(GameVariablesScript.MusicMuted);
 	}
 	
 	// Update is called once per frame

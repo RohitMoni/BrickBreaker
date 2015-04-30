@@ -8,6 +8,8 @@ public class GameVariablesScript : MonoBehaviour {
     private const bool DefaultSliderMovement = true;
     private const int DefaultSensitivity = 5;
     private const int DefaultBallSpeed = 5;
+    private const bool DefaultMusicMuted = false;
+    private const bool DefaultSoundEffectsMuted = false;
     public const int MaxBallSpeed = 15;
     public const int MinBallSpeed = 3;
     public static float BallSpeedCoeff = 2f;
@@ -20,6 +22,8 @@ public class GameVariablesScript : MonoBehaviour {
     public static bool SliderMovement = DefaultSliderMovement;
     public static float PaddleSensitivity = DefaultSensitivity / PaddleSensitivityCoeff;
     public static float BallSpeed = DefaultBallSpeed / BallSpeedCoeff;
+    public static bool MusicMuted = DefaultMusicMuted;
+    public static bool SoundEffectsMuted = DefaultSoundEffectsMuted;
 
     /* Other Global Variables */
     public static int ScreenToStartOn = 0;

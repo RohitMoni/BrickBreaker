@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BackgroundMusicScript : MonoBehaviour {
 
@@ -10,11 +11,7 @@ public class BackgroundMusicScript : MonoBehaviour {
     /* References */
     private AudioSource _backgroundMusicSource;
 
-    private static BackgroundMusicScript _instance = null;
-    public static BackgroundMusicScript Instance
-    {
-        get { return _instance; }
-    }
+    public static BackgroundMusicScript Instance { get; private set; }
 
     /* Constants */
 
@@ -26,12 +23,18 @@ public class BackgroundMusicScript : MonoBehaviour {
             return;
         }
     
-        _instance = this;
+        Instance = this;
         _backgroundMusicSource = GetComponent<AudioSource>();
         _backgroundMusicSource.clip = Music;
         _backgroundMusicSource.loop = true;
         _backgroundMusicSource.Play();
+
         DontDestroyOnLoad(gameObject);
+    }
+
+    public static void SetBackgroundMusicMute(bool muted)
+    {
+        Instance._backgroundMusicSource.mute = muted;
     }
 
     public static void ToggleBackgroundMusic()

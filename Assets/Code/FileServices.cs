@@ -60,7 +60,10 @@ namespace Assets.Code
             var data = LoadFile(GameVariablesScript.GameFile);
 
             if (data == null)
+            {
                 GameVariablesScript.HighScore = 0;
+                return;
+            }
 
             foreach (var line in data.Split('|'))
             {
@@ -89,6 +92,12 @@ namespace Assets.Code
                     case "Ball Speed":
                         GameVariablesScript.BallSpeed = float.Parse(relevantData);
                         break;
+                    case "Sound Effects Muted":
+                        GameVariablesScript.SoundEffectsMuted = bool.Parse(relevantData);
+                        break;
+                    case "Music Muted":
+                        GameVariablesScript.MusicMuted = bool.Parse(relevantData);
+                        break;
                 }
             }
         }
@@ -99,7 +108,9 @@ namespace Assets.Code
                        "Bottom Slider: " + GameVariablesScript.SliderMovement + " |" +
                        "Relative Paddle: " + GameVariablesScript.RelativePaddle + " |" +
                        "Paddle Sensitivity: " + GameVariablesScript.PaddleSensitivity + " |" +
-                       "Ball Speed: " + GameVariablesScript.BallSpeed;
+                       "Ball Speed: " + GameVariablesScript.BallSpeed + " |" +
+                       "Sound Effects Muted: " + GameVariablesScript.SoundEffectsMuted + " |" +
+                       "Music Muted: " + GameVariablesScript.MusicMuted;
 
             SaveFile(GameVariablesScript.GameFile, data);
         }

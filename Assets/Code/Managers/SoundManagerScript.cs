@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SoundManagerScript : MonoBehaviour {
 
@@ -14,10 +15,18 @@ public class SoundManagerScript : MonoBehaviour {
     public AudioClip[] BrickCollideSes;
     private int _brickCollideCount;
 
+    public Sprite SoundEffectsOnImage;
+    public Sprite SoundEffectsOffImage;
+
+    public Sprite MusicOnImage;
+    public Sprite MusicOffImage;
+
     /* References */
     private AudioSource _midLevelSource;
     private AudioSource _midLevelSource2;
     private AudioSource[] _brickCollideSource;
+    private Image _muteSoundEffectsButtonImage;
+    private Image _muteMusicButtonImage;
 
     /* Constants */
 
@@ -32,6 +41,14 @@ public class SoundManagerScript : MonoBehaviour {
 	        GameObject.FindGameObjectWithTag("MainCamera").transform.FindChild("BrickCollide2").GetComponent<AudioSource>(),
 	        GameObject.FindGameObjectWithTag("MainCamera").transform.FindChild("BrickCollide3").GetComponent<AudioSource>()
 	    };
+
+	    _muteSoundEffectsButtonImage = GameObject.Find("MuteSoundEffectsButton").GetComponent<Image>();
+        _muteMusicButtonImage = GameObject.Find("MuteMusicButton").GetComponent<Image>();
+
+        ToggleMuteSounds();
+        ToggleMuteSounds();
+        ToggleMuteMusic();
+        ToggleMuteMusic();
 	}
 
     public void PlayBallHitsPaddleSound()
@@ -76,6 +93,28 @@ public class SoundManagerScript : MonoBehaviour {
     public void ResetBrickCollideCount()
     {
         _brickCollideCount = 0;
+    }
+
+    public void ToggleMuteSounds()
+    {
+        GameVariablesScript.SoundEffectsMuted = !GameVariablesScript.SoundEffectsMuted;
+
+        _muteSoundEffectsButtonImage.overrideSprite = GameVariablesScript.SoundEffectsMuted ? SoundEffectsOffImage : SoundEffectsOnImage;
+
+        _midLevelSource.mute = GameVariablesScript.SoundEffectsMuted;
+        _midLevelSource2.mute = GameVariablesScript.SoundEffectsMuted;
+        _brickCollideSource[0].mute = GameVariablesScript.SoundEffectsMuted;
+        _brickCollideSource[1].mute = GameVariablesScript.SoundEffectsMuted;
+        _brickCollideSource[2].mute = GameVariablesScript.SoundEffectsMuted;
+    }
+
+    public void ToggleMuteMusic()
+    {
+        GameVariablesScript.MusicMuted = !GameVariablesScript.MusicMuted;
+
+        _muteMusicButtonImage.overrideSprite = GameVariablesScript.MusicMuted ? MusicOffImage : MusicOnImage;
+
+        BackgroundMusicScript.SetBackgroundMusicMute(GameVariablesScript.MusicMuted);
     }
 
     private AudioSource MidSource()
