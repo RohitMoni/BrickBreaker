@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class OuterSolidRingScript : MonoBehaviour {
+public class OuterLoseRingScript : MonoBehaviour {
 
     /* References */
     private GameManagerScript _gameManager;

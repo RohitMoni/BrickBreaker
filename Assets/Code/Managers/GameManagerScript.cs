@@ -352,8 +352,6 @@ namespace Assets.Code
 
             FileServices.SaveGame();
 
-            ResetGame();
-
             // Make the main menu scene load up the score screen first
             GameVariablesScript.ScreenToStartOn = 2;
 
