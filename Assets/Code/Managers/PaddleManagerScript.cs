@@ -14,6 +14,7 @@ public class PaddleManagerScript : MonoBehaviour
 #endif
     private int _numberOfActivePaddles;
     private float _currentPaddleWidth;
+    private Quaternion _currentSliderMovement;
     private IEnumerator _widenCoroutine;
     
     /* References */
@@ -90,7 +91,7 @@ public class PaddleManagerScript : MonoBehaviour
                     PreciseControlScheme();
                     break;
                 case 3:
-                    // SliderControlScheme() is already called by the slider directly
+                    SliderControlScheme();
                     break;
                 case 4:
                     TapControlScheme();
@@ -190,16 +191,21 @@ public class PaddleManagerScript : MonoBehaviour
         }
     }
 
-    public void SliderControlScheme(float sliderValue)
+    public void SliderControl(float sliderValue)
     {
-        //var valueDifference = sliderValue - 180;
-
+        var valueDifference = sliderValue - 180;
+        
         //var angleDifference = valueDifference * GameVariablesScript.PaddleSensitivity;
 
-        //_currentSliderMovement = new Quaternion { eulerAngles = new Vector3(0, 0, angleDifference) };
+        _currentSliderMovement = new Quaternion { eulerAngles = new Vector3(0, 0, valueDifference) };
     }
 
-    public void FreeControlScheme()
+    private void SliderControlScheme()
+    {
+        _paddleAnchor.transform.rotation = _currentSliderMovement;
+    }
+
+    private void FreeControlScheme()
     {
         foreach (var touch in Input.touches)
         {
@@ -232,7 +238,7 @@ public class PaddleManagerScript : MonoBehaviour
         }
     }
 
-    public void PreciseControlScheme()
+    private void PreciseControlScheme()
     {
         foreach (var touch in Input.touches)
         {
@@ -255,16 +261,34 @@ public class PaddleManagerScript : MonoBehaviour
         }
     }
 
-    public void TapControlScheme()
+    private void TapControlScheme()
     {
-        
+        foreach (var touch in Input.touches)
+        {
+            if (touch.position.x > Screen.width/2f)
+            {
+                var valueDifference = GameVariablesScript.PaddleSensitivity;
+
+                var angleDifference = new Quaternion { eulerAngles = new Vector3(0, 0, valueDifference) };
+
+                _paddleAnchor.transform.rotation = _paddleAnchor.transform.rotation*angleDifference;
+            }
+            else
+            {
+                var valueDifference = -GameVariablesScript.PaddleSensitivity;
+
+                var angleDifference = new Quaternion { eulerAngles = new Vector3(0, 0, valueDifference) };
+
+                _paddleAnchor.transform.rotation = _paddleAnchor.transform.rotation * angleDifference;
+            }
+        }
     }
 
     public void Reset()
     {
         _controlSlider.value = 180;
         _numberOfActivePaddles = 1;
-
+        _currentSliderMovement = Quaternion.identity;
         _paddleAnchor.transform.rotation = Quaternion.identity;
         _currentPaddleWidth = 1;
         _widenCoroutine = null;
