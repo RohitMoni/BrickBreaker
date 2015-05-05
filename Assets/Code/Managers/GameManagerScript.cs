@@ -365,7 +365,7 @@ namespace Assets.Code
         {
             IsPaused = !IsPaused;
             SetInGameMenuActive(IsPaused);
-            SetPaddleMovementSliderActive(!IsPaused && GameVariablesScript.SliderMovement);
+            SetSliderActive(!IsPaused && (GameVariablesScript.ControlScheme == 3));
             BackgroundMusicScript.ToggleBackgroundMusic();
         }
 
@@ -374,7 +374,7 @@ namespace Assets.Code
             _inGameMenu.SetActive(active);
         }
 
-        private void SetPaddleMovementSliderActive(bool active)
+        private void SetSliderActive(bool active)
         {
             _controlSlider.SetActive(active);
         }
@@ -392,7 +392,7 @@ namespace Assets.Code
 
             SetInGameMenuActive(false);
             _comboText.enabled = false;
-            SetPaddleMovementSliderActive(GameVariablesScript.SliderMovement);
+            SetSliderActive(GameVariablesScript.ControlScheme == 3);
         }
 
         public void SetWinLossState(bool state)

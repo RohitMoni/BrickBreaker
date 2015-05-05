@@ -80,11 +80,8 @@ namespace Assets.Code
                     case "High Score":
                         GameVariablesScript.HighScore = Int32.Parse(relevantData);
                         break;
-                    case "Bottom Slider":
-                        GameVariablesScript.SliderMovement = bool.Parse(relevantData);
-                        break;
-                    case "Relative Paddle":
-                        GameVariablesScript.RelativePaddle = bool.Parse(relevantData);
+                    case "Control Scheme Index":
+                        GameVariablesScript.ControlScheme = int.Parse(relevantData);
                         break;
                     case "Paddle Sensitivity":
                         GameVariablesScript.PaddleSensitivity = float.Parse(relevantData);
@@ -105,8 +102,7 @@ namespace Assets.Code
         public static void SaveGame()
         {
             var data = "High Score: " + GameVariablesScript.HighScore + " |" +
-                       "Bottom Slider: " + GameVariablesScript.SliderMovement + " |" +
-                       "Relative Paddle: " + GameVariablesScript.RelativePaddle + " |" +
+                       "Control Scheme Index: " + GameVariablesScript.ControlScheme + " |" +
                        "Paddle Sensitivity: " + GameVariablesScript.PaddleSensitivity + " |" +
                        "Ball Speed: " + GameVariablesScript.BallSpeed + " |" +
                        "Sound Effects Muted: " + GameVariablesScript.SoundEffectsMuted + " |" +

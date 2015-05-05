@@ -21,10 +21,10 @@ public class MainMenuManagerScript : MonoBehaviour {
 
     private Text _lastScoreText;
     private GameObject[] _highScoreText;
-    private Toggle _relativeMovementToggle;
-    private Toggle _sliderMovementToggle;
     private Slider _sensitivitySlider;
     private Slider _ballSpeedSlider;
+    private Transform[] _controlSchemeToggleButtons;
+    private GameObject[] _controlSchemeDemoImages;
 
     /* Constants */
     private const float CameraShiftTime = 0.2f;
@@ -42,25 +42,21 @@ public class MainMenuManagerScript : MonoBehaviour {
 	    _camera = Camera.main;
 	    _lastScoreText = GameObject.FindGameObjectWithTag("LastScoreText").GetComponent<Text>();
 	    _highScoreText = GameObject.FindGameObjectsWithTag("HighScoreText");
-        _relativeMovementToggle = GameObject.FindGameObjectWithTag("RelativeMovementToggle").GetComponent<Toggle>();
-	    _sliderMovementToggle = GameObject.FindGameObjectWithTag("SliderMovementToggle").GetComponent<Toggle>();
         _sensitivitySlider = GameObject.FindGameObjectWithTag("SensitivitySlider").GetComponent<Slider>();
         _ballSpeedSlider = GameObject.FindGameObjectWithTag("BallSpeedSlider").GetComponent<Slider>();
+	    _controlSchemeToggleButtons = GameObject.Find("ControlSchemeToggleButtons").transform.GetComponentsInChildren<Transform>();
+	    _controlSchemeDemoImages = new GameObject[4];
+	    _controlSchemeDemoImages[0] = GameObject.Find("FreeScheme");
+        _controlSchemeDemoImages[1] = GameObject.Find("PreciseScheme");
+        _controlSchemeDemoImages[2] = GameObject.Find("SliderScheme");
+        _controlSchemeDemoImages[3] = GameObject.Find("TapScheme");
 
         _shiftStartPosition = new Vector3(GameVariablesScript.ScreenToStartOn * 1080, 0, -10);
 	    _camera.transform.position = _shiftStartPosition;
 
         FileServices.LoadGame();
 
-        // Setting ui elements from game variables
-        foreach (var highScoreTextObj in _highScoreText)
-            highScoreTextObj.GetComponent<Text>().text = GameVariablesScript.HighScore.ToString();
-        _lastScoreText.text = GameVariablesScript.LastScore.ToString();
-	    _relativeMovementToggle.isOn = GameVariablesScript.RelativePaddle;
-	    _sliderMovementToggle.isOn = GameVariablesScript.SliderMovement;
-	    _sensitivitySlider.value = GameVariablesScript.PaddleSensitivity*GameVariablesScript.PaddleSensitivityCoeff;
-	    _ballSpeedSlider.value = GameVariablesScript.BallSpeed*GameVariablesScript.BallSpeedCoeff;
-        BackgroundMusicScript.SetBackgroundMusicMute(GameVariablesScript.MusicMuted);
+        SetUiFromGameVariables();
 	}
 	
 	// Update is called once per frame
@@ -143,23 +139,13 @@ public class MainMenuManagerScript : MonoBehaviour {
     }
 
     #region Menu Controlled Settings
-    public void SetRelativePaddle(bool value)
+
+    public void SetControlScheme(int schemeNumber)
     {
-        GameVariablesScript.RelativePaddle = value;
-        _sensitivitySlider.interactable = value;
+        GameVariablesScript.ControlScheme = schemeNumber;
 
-        var colour = (value ? new Color(1, 1, 1, 1) : new Color(100f / 256f, 100 / 256f, 100f / 256f, 1));
+        SetControlSchemeUiFromGameVariables();
 
-        _sensitivitySlider.transform.GetChild(0).GetComponent<Image>().color = colour;
-        _sensitivitySlider.transform.GetChild(1).GetChild(0).GetComponent<Image>().color = colour;
-        _sensitivitySlider.transform.GetChild(3).GetComponent<Text>().color = colour;
-
-        FileServices.SaveGame();
-    }
-
-    public void SetSliderMovement(bool value)
-    {
-        GameVariablesScript.SliderMovement = value;
         FileServices.SaveGame();
     }
 
@@ -178,16 +164,60 @@ public class MainMenuManagerScript : MonoBehaviour {
     public void Reset()
     {
         GameVariablesScript.ResetVariables();
-        _relativeMovementToggle.isOn = GameVariablesScript.RelativePaddle;
-        _sliderMovementToggle.isOn = GameVariablesScript.SliderMovement;
-        _sensitivitySlider.value = GameVariablesScript.PaddleSensitivity * GameVariablesScript.PaddleSensitivityCoeff;
-        _ballSpeedSlider.value = GameVariablesScript.BallSpeed * GameVariablesScript.BallSpeedCoeff;
+        SetUiFromGameVariables();
+        FileServices.SaveGame();
+    }
 
+    private void SetSensitivitySliderEnabled(bool Enabled)
+    {
+        _sensitivitySlider.interactable = Enabled;
+        var colour = Enabled ? Color.white : Color.gray;
+        _sensitivitySlider.transform.FindChild("Background").GetComponent<Image>().color = colour;
+        _sensitivitySlider.transform.FindChild("Fill Area").FindChild("Fill").GetComponent<Image>().color = colour;
+    }
+
+    private void SetUiFromGameVariables()
+    {
+        // Setting ui elements from game variables
+
+        // Score
         foreach (var highScoreTextObj in _highScoreText)
             highScoreTextObj.GetComponent<Text>().text = GameVariablesScript.HighScore.ToString();
         _lastScoreText.text = GameVariablesScript.LastScore.ToString();
-        
-        FileServices.SaveGame();
+
+        // Options sliders
+        _sensitivitySlider.value = GameVariablesScript.PaddleSensitivity * GameVariablesScript.PaddleSensitivityCoeff;
+        _ballSpeedSlider.value = GameVariablesScript.BallSpeed * GameVariablesScript.BallSpeedCoeff;
+
+        SetControlSchemeUiFromGameVariables();
+
+        // Music  & Sound
+        BackgroundMusicScript.SetBackgroundMusicMute(GameVariablesScript.MusicMuted);
+    }
+
+    private void SetControlSchemeUiFromGameVariables()
+    {
+        // Control Scheme Button colours and demo images
+        for (var i = 1; i < _controlSchemeToggleButtons.Length; i++)
+        {
+            var button = _controlSchemeToggleButtons[i];
+            var demoImage = _controlSchemeDemoImages[i - 1];
+            if (i == GameVariablesScript.ControlScheme)
+            {
+                button.GetComponent<Image>().color = new Color(255f / 255f, 132f / 255f, 0, 1);
+                demoImage.SetActive(true);
+            }
+            else
+            {
+                button.GetComponent<Image>().color = new Color(1, 1, 1, 1);
+                demoImage.SetActive(false);
+            }
+        }
+
+        if (GameVariablesScript.ControlScheme == 1 || GameVariablesScript.ControlScheme == 4)
+            SetSensitivitySliderEnabled(true);
+        else
+            SetSensitivitySliderEnabled(false);
     }
     #endregion
 }

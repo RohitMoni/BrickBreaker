@@ -10,6 +10,7 @@ public class GameVariablesScript : MonoBehaviour {
     private const int DefaultBallSpeed = 5;
     private const bool DefaultMusicMuted = false;
     private const bool DefaultSoundEffectsMuted = false;
+    private const int DefaultControlScheme = 1;
     public const int MaxBallSpeed = 15;
     public const int MinBallSpeed = 3;
     public static float BallSpeedCoeff = 2f;
@@ -18,8 +19,7 @@ public class GameVariablesScript : MonoBehaviour {
     public static string GameFile = "playerData.dat";
 
     /* Game Properties */
-    public static bool RelativePaddle = DefaultRelativePaddle;
-    public static bool SliderMovement = DefaultSliderMovement;
+    public static int ControlScheme = DefaultControlScheme;
     public static float PaddleSensitivity = DefaultSensitivity / PaddleSensitivityCoeff;
     public static float BallSpeed = DefaultBallSpeed / BallSpeedCoeff;
     public static bool MusicMuted = DefaultMusicMuted;
@@ -33,8 +33,7 @@ public class GameVariablesScript : MonoBehaviour {
     /* Functions */
     public static void ResetVariables()
     {
-        RelativePaddle = DefaultRelativePaddle;
-        SliderMovement = DefaultSliderMovement;
+        ControlScheme = DefaultControlScheme;
         PaddleSensitivity = DefaultSensitivity/PaddleSensitivityCoeff;
         BallSpeed = DefaultBallSpeed/BallSpeedCoeff;
         HighScore = LastScore = 0;

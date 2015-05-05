@@ -13,8 +13,6 @@ public class PaddleManagerScript : MonoBehaviour
     private float _paddleSpeed;
 #endif
     private int _numberOfActivePaddles;
-    private int _controlFingerId;
-    private Quaternion _currentSliderMovement;
     private float _currentPaddleWidth;
     private IEnumerator _widenCoroutine;
     
@@ -74,34 +72,30 @@ public class PaddleManagerScript : MonoBehaviour
                 LaunchBalls();
             }
 #endif
-#if UNITY_ANDROID
+
             foreach (var touch in Input.touches)
             {
                 if (touch.tapCount == 2)
                 {
                     LaunchBalls();
                 }
-
-                // Reset slider if the user stops touching it
-                if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
-                {
-                    // End finger
-                    if (GameVariablesScript.RelativePaddle)
-                        _currentSliderMovement = Quaternion.identity;
-                    else
-                        _currentSliderMovement = _paddleAnchor.transform.rotation;
-
-                    _controlFingerId = -1;
-                    _controlSlider.value = 180;
-                }
             }
 
-            if (!GameVariablesScript.SliderMovement)
-                NonSliderMovement();
-            else
-                if (GameVariablesScript.RelativePaddle)
-                    _paddleAnchor.transform.rotation = _paddleAnchor.transform.rotation * _currentSliderMovement;
-#endif
+            switch (GameVariablesScript.ControlScheme)
+            {
+                case 1:
+                    FreeControlScheme();
+                    break;
+                case 2:
+                    PreciseControlScheme();
+                    break;
+                case 3:
+                    // SliderControlScheme() is already called by the slider directly
+                    break;
+                case 4:
+                    TapControlScheme();
+                    break;
+            }
         }
     }
 
@@ -196,96 +190,79 @@ public class PaddleManagerScript : MonoBehaviour
         }
     }
 
-    public void SliderMovement(float sliderValue)
+    public void SliderControlScheme(float sliderValue)
     {
-        if (!GameVariablesScript.RelativePaddle)
-        {
-            _paddleAnchor.transform.rotation = _currentSliderMovement * new Quaternion { eulerAngles = new Vector3(0, 0, sliderValue-180)};
+        //var valueDifference = sliderValue - 180;
 
-            foreach (var touch in Input.touches)
-            {
-                _controlFingerId = touch.fingerId;
-            }
-        }
-        else
-        {
-            foreach (var touch in Input.touches)
-            {
-                _controlFingerId = touch.fingerId;
+        //var angleDifference = valueDifference * GameVariablesScript.PaddleSensitivity;
 
-                // If we're tracking the right finger
-                if (touch.fingerId == _controlFingerId)
+        //_currentSliderMovement = new Quaternion { eulerAngles = new Vector3(0, 0, angleDifference) };
+    }
+
+    public void FreeControlScheme()
+    {
+        foreach (var touch in Input.touches)
+        {
+            // RELATIVE MOVEMENT
+            if (touch.phase == TouchPhase.Moved)
+            {
+                var touchPoint = _camera.ScreenToWorldPoint(touch.position);
+                touchPoint.z = 0;
+                var deltaV2 = touch.deltaPosition;
+                var delta = new Vector3(deltaV2.x, deltaV2.y, 0);
+
+                var finalPoint = touchPoint + delta;
+
+                var touchPointAngle = Mathf.Atan2(touchPoint.y, touchPoint.x) * Mathf.Rad2Deg + 180f;
+                var finalPointAngle = Mathf.Atan2(finalPoint.y, finalPoint.x) * Mathf.Rad2Deg + 180f;
+
+                var angleDifference = finalPointAngle - touchPointAngle;
+                if (Mathf.Abs(angleDifference) > 100)
                 {
-                    var valueDifference = sliderValue - 180;
-
-                    var angleDifference = valueDifference * GameVariablesScript.PaddleSensitivity;
-
-                    _currentSliderMovement = new Quaternion { eulerAngles = new Vector3(0, 0, angleDifference) };
+                    // arbitrary high number that represents when the two points are in different quadrants
+                    angleDifference += (360 * -Mathf.Sign(angleDifference));
                 }
+
+                angleDifference *= GameVariablesScript.PaddleSensitivity;
+
+                var rotationChange = new Quaternion { eulerAngles = new Vector3(0, 0, angleDifference) };
+
+                _paddleAnchor.transform.rotation = _paddleAnchor.transform.rotation * rotationChange;
             }
         }
     }
 
-    public void NonSliderMovement()
+    public void PreciseControlScheme()
     {
         foreach (var touch in Input.touches)
         {
-            if (GameVariablesScript.RelativePaddle)
+            // ABSOLUTE MOVEMENT
+            if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)
             {
-                // RELATIVE MOVEMENT - Buggy
-                if (touch.phase == TouchPhase.Moved)
-                {
-                    var touchPoint = _camera.ScreenToWorldPoint(touch.position);
-                    touchPoint.z = 0;
-                    var deltaV2 = touch.deltaPosition;
-                    var delta = new Vector3(deltaV2.x, deltaV2.y, 0);
+                // Ignore touches that hit the pause button
+                if (touch.position.y > Screen.height/10*9)
+                    break;
 
-                    var finalPoint = touchPoint + delta;
+                var worldPos = _camera.ScreenToWorldPoint(touch.position);
 
-                    var touchPointAngle = Mathf.Atan2(touchPoint.y, touchPoint.x) * Mathf.Rad2Deg + 180f;
-                    var finalPointAngle = Mathf.Atan2(finalPoint.y, finalPoint.x) * Mathf.Rad2Deg + 180f;
+                var angleRadians = Math.Atan2(worldPos.y, worldPos.x);
+                var angleDegrees = angleRadians*180.0f/Math.PI;
 
-                    var angleDifference = finalPointAngle - touchPointAngle;
-                    if (Mathf.Abs(angleDifference) > 100)
-                    {
-                        // arbitrary high number that represents when the two points are in different quadrants
-                        angleDifference += (360*-Mathf.Sign(angleDifference));
-                    }
+                angleDegrees += 90;
 
-                    angleDifference *= GameVariablesScript.PaddleSensitivity;
-
-                    var rotationChange = new Quaternion { eulerAngles = new Vector3(0, 0, angleDifference) };
-
-                    _paddleAnchor.transform.rotation = _paddleAnchor.transform.rotation * rotationChange;
-                }
-            }
-            else
-            {
-                // ABSOLUTE MOVEMENT
-                if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)
-                {
-                    // Ignore touches that hit the pause button
-                    if (touch.position.y > Screen.height / 10 * 9)
-                        break;
-
-                    var worldPos = _camera.ScreenToWorldPoint(touch.position);
-
-                    var angleRadians = Math.Atan2(worldPos.y, worldPos.x);
-                    var angleDegrees = angleRadians * 180.0f / Math.PI;
-
-                    angleDegrees += 90;
-
-                    _paddleAnchor.transform.eulerAngles = new Vector3(0, 0, (float)angleDegrees);
-                }
+                _paddleAnchor.transform.eulerAngles = new Vector3(0, 0, (float) angleDegrees);
             }
         }
+    }
+
+    public void TapControlScheme()
+    {
+        
     }
 
     public void Reset()
     {
         _controlSlider.value = 180;
-        _controlFingerId = -1;
-        _currentSliderMovement = Quaternion.identity;
         _numberOfActivePaddles = 1;
 
         _paddleAnchor.transform.rotation = Quaternion.identity;
