@@ -66,6 +66,8 @@ public class MainMenuManagerScript : MonoBehaviour {
 
         FileServices.LoadGame();
 
+        BackgroundMusicScript.SetBackgroundMusicMute(GameVariablesScript.MusicMuted);
+
         SetUiFromGameVariables();
 	}
 	

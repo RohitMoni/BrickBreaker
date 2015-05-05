@@ -195,8 +195,6 @@ public class PaddleManagerScript : MonoBehaviour
     {
         var valueDifference = sliderValue - 180;
         
-        //var angleDifference = valueDifference * GameVariablesScript.PaddleSensitivity;
-
         _currentSliderMovement = new Quaternion { eulerAngles = new Vector3(0, 0, valueDifference) };
     }
 
@@ -212,6 +210,10 @@ public class PaddleManagerScript : MonoBehaviour
             // RELATIVE MOVEMENT
             if (touch.phase == TouchPhase.Moved)
             {
+                // Ignore touches that hit the pause button
+                if (touch.position.y > Screen.height / 10 * 9)
+                    break;
+
                 var touchPoint = _camera.ScreenToWorldPoint(touch.position);
                 touchPoint.z = 0;
                 var deltaV2 = touch.deltaPosition;
@@ -265,9 +267,13 @@ public class PaddleManagerScript : MonoBehaviour
     {
         foreach (var touch in Input.touches)
         {
+            // Ignore touches that hit the pause button
+            if (touch.position.y > Screen.height / 10 * 9)
+                break;
+
             if (touch.position.x > Screen.width/2f)
             {
-                var valueDifference = GameVariablesScript.PaddleSensitivity;
+                var valueDifference = GameVariablesScript.PaddleSensitivity * 20f;
 
                 var angleDifference = new Quaternion { eulerAngles = new Vector3(0, 0, valueDifference) };
 
@@ -275,7 +281,7 @@ public class PaddleManagerScript : MonoBehaviour
             }
             else
             {
-                var valueDifference = -GameVariablesScript.PaddleSensitivity;
+                var valueDifference = -GameVariablesScript.PaddleSensitivity * 20f;
 
                 var angleDifference = new Quaternion { eulerAngles = new Vector3(0, 0, valueDifference) };
 
