@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Security.AccessControl;
+using Assets.Code;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -44,12 +46,15 @@ public class SoundManagerScript : MonoBehaviour {
 
 	    _muteSoundEffectsButtonImage = GameObject.Find("MuteSoundEffectsButton").GetComponent<Image>();
         _muteMusicButtonImage = GameObject.Find("MuteMusicButton").GetComponent<Image>();
-
-        ToggleMuteSounds();
-        ToggleMuteSounds();
-        ToggleMuteMusic();
-        ToggleMuteMusic();
 	}
+
+    public void StartUp()
+    {
+        ToggleMuteSounds();
+        ToggleMuteSounds();
+        ToggleMuteMusic();
+        ToggleMuteMusic();
+    }
 
     public void PlayBallHitsPaddleSound()
     {
@@ -106,6 +111,8 @@ public class SoundManagerScript : MonoBehaviour {
         _brickCollideSource[0].mute = GameVariablesScript.SoundEffectsMuted;
         _brickCollideSource[1].mute = GameVariablesScript.SoundEffectsMuted;
         _brickCollideSource[2].mute = GameVariablesScript.SoundEffectsMuted;
+
+        FileServices.SaveGame();
     }
 
     public void ToggleMuteMusic()
@@ -115,6 +122,8 @@ public class SoundManagerScript : MonoBehaviour {
         _muteMusicButtonImage.overrideSprite = GameVariablesScript.MusicMuted ? MusicOffImage : MusicOnImage;
 
         BackgroundMusicScript.SetBackgroundMusicMute(GameVariablesScript.MusicMuted);
+
+        FileServices.SaveGame();
     }
 
     private AudioSource MidSource()

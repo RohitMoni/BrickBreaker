@@ -33,6 +33,7 @@ namespace Assets.Code
         private Camera _camera;
         private PaddleManagerScript _paddleManager;
         private BrickManagerScript  _brickManager;
+        private SoundManagerScript _soundManager;
         private EventTextScript _eventManager;
         private GameObject _inGameMenu;
         private GameObject _controlSlider;
@@ -72,6 +73,7 @@ namespace Assets.Code
             
             _paddleManager = GetComponent<PaddleManagerScript>();
             _brickManager = GetComponent<BrickManagerScript>();
+            _soundManager = GetComponent<SoundManagerScript>();
             _eventManager = GameObject.FindGameObjectWithTag("EventText").GetComponent<EventTextScript>();
             _inGameMenu = GameObject.FindGameObjectWithTag("InGameMenu");
             _controlSlider = GameObject.FindGameObjectWithTag("ControlSlider");
@@ -340,6 +342,7 @@ namespace Assets.Code
             ResetGame();
             _paddleManager.CreateNewBall();
             _brickManager.StartUp();
+            _soundManager.StartUp();
 
             IsStarted = true;   // To make sure we don't run this over and over again
         }

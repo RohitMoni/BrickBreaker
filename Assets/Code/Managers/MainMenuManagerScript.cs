@@ -8,6 +8,12 @@ using UnityEngine.UI;
 
 public class MainMenuManagerScript : MonoBehaviour {
 
+    /* Editor Set */
+    public Sprite SoundEffectsOnImage;
+    public Sprite SoundEffectsOffImage;
+    public Sprite MusicOnImage;
+    public Sprite MusicOffImage;
+
     /* Properties */
     public bool IsUsingSlider;
 
@@ -25,6 +31,8 @@ public class MainMenuManagerScript : MonoBehaviour {
     private Slider _ballSpeedSlider;
     private Transform[] _controlSchemeToggleButtons;
     private GameObject[] _controlSchemeDemoImages;
+    private Image _muteSoundEffectsButtonImage;
+    private Image _muteMusicButtonImage;
 
     /* Constants */
     private const float CameraShiftTime = 0.2f;
@@ -50,6 +58,8 @@ public class MainMenuManagerScript : MonoBehaviour {
         _controlSchemeDemoImages[1] = GameObject.Find("PreciseScheme");
         _controlSchemeDemoImages[2] = GameObject.Find("SliderScheme");
         _controlSchemeDemoImages[3] = GameObject.Find("TapScheme");
+        _muteSoundEffectsButtonImage = GameObject.Find("MuteSoundEffectsButton").GetComponent<Image>();
+        _muteMusicButtonImage = GameObject.Find("MuteMusicButton").GetComponent<Image>();
 
         _shiftStartPosition = new Vector3(GameVariablesScript.ScreenToStartOn * 1080, 0, -10);
 	    _camera.transform.position = _shiftStartPosition;
@@ -140,6 +150,26 @@ public class MainMenuManagerScript : MonoBehaviour {
 
     #region Menu Controlled Settings
 
+    public void ToggleMuteSounds()
+    {
+        GameVariablesScript.SoundEffectsMuted = !GameVariablesScript.SoundEffectsMuted;
+
+        _muteSoundEffectsButtonImage.overrideSprite = GameVariablesScript.SoundEffectsMuted ? SoundEffectsOffImage : SoundEffectsOnImage;
+
+        FileServices.SaveGame();
+    }
+
+    public void ToggleMuteMusic()
+    {
+        GameVariablesScript.MusicMuted = !GameVariablesScript.MusicMuted;
+
+        _muteMusicButtonImage.overrideSprite = GameVariablesScript.MusicMuted ? MusicOffImage : MusicOnImage;
+
+        BackgroundMusicScript.SetBackgroundMusicMute(GameVariablesScript.MusicMuted);
+
+        FileServices.SaveGame();
+    }
+
     public void SetControlScheme(int schemeNumber)
     {
         GameVariablesScript.ControlScheme = schemeNumber;
@@ -192,7 +222,8 @@ public class MainMenuManagerScript : MonoBehaviour {
         SetControlSchemeUiFromGameVariables();
 
         // Music  & Sound
-        BackgroundMusicScript.SetBackgroundMusicMute(GameVariablesScript.MusicMuted);
+        _muteMusicButtonImage.overrideSprite = GameVariablesScript.MusicMuted ? MusicOffImage : MusicOnImage;
+        _muteSoundEffectsButtonImage.overrideSprite = GameVariablesScript.SoundEffectsMuted ? SoundEffectsOffImage : SoundEffectsOnImage;
     }
 
     private void SetControlSchemeUiFromGameVariables()
