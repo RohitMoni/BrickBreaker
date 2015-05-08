@@ -36,4 +36,30 @@ public class GameVariablesScript : MonoBehaviour {
         BallSpeed = DefaultBallSpeed/BallSpeedCoeff;
         HighScore = LastScore = 0;
     }
+
+    public static string ConvertScoreToString(int score)
+    {
+        string scoreText = "";
+
+        if (score > 999999)
+        {
+            scoreText += score/1000000;
+            scoreText += ".";
+            scoreText += (score%1000000) / 1000;
+            scoreText += "M";
+        }
+        else if (score > 50000)
+        {
+            scoreText += score/1000;
+            scoreText += ".";
+            scoreText += (score%1000)/100;
+            scoreText += "k";
+        }
+        else
+        {
+            scoreText += score.ToString();
+        }
+
+        return scoreText;
+    }
 }

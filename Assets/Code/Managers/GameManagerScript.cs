@@ -108,7 +108,7 @@ namespace Assets.Code
 #if UNITY_EDITOR
             if (Input.GetKeyUp(KeyCode.Return))
             {
-                StartShake();
+                AddScore(100000);
             }
 
             if (Input.GetKeyUp(KeyCode.Escape) && !IsPaused)
@@ -151,8 +151,12 @@ namespace Assets.Code
                 return;
 
             // Update score
-            _textPointScore += Mathf.CeilToInt((_actualPointScore - _textPointScore)/2f);
-            _scoreText.text = _textPointScore.ToString();
+            if (_actualPointScore != _textPointScore)
+            {
+                _textPointScore += Mathf.CeilToInt((_actualPointScore - _textPointScore)/2f);
+                _scoreText.text = GameVariablesScript.ConvertScoreToString(_textPointScore);
+                Debug("Hi");
+            }
 
             // Update time
             if (TimerStarted)

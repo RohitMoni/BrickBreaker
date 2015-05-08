@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Mime;
 using System.Timers;
 using Assets.Code;
+using Soomla.Profile;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -69,6 +70,10 @@ public class MainMenuManagerScript : MonoBehaviour {
         BackgroundMusicScript.SetBackgroundMusicMute(GameVariablesScript.MusicMuted);
 
         SetUiFromGameVariables();
+
+        SoomlaProfile.Initialize();
+       
+        //SoomlaProfile.Login(Provider.FACEBOOK);
 	}
 	
 	// Update is called once per frame
@@ -214,13 +219,14 @@ public class MainMenuManagerScript : MonoBehaviour {
 
         // Score
         foreach (var highScoreTextObj in _highScoreText)
-            highScoreTextObj.GetComponent<Text>().text = GameVariablesScript.HighScore.ToString();
-        _lastScoreText.text = GameVariablesScript.LastScore.ToString();
+            highScoreTextObj.GetComponent<Text>().text =  GameVariablesScript.ConvertScoreToString(GameVariablesScript.HighScore);
+        _lastScoreText.text = GameVariablesScript.ConvertScoreToString(GameVariablesScript.LastScore);
 
         // Options sliders
         _sensitivitySlider.value = GameVariablesScript.PaddleSensitivity * GameVariablesScript.PaddleSensitivityCoeff;
         _ballSpeedSlider.value = GameVariablesScript.BallSpeed * GameVariablesScript.BallSpeedCoeff;
 
+        // Control Scheme
         SetControlSchemeUiFromGameVariables();
 
         // Music  & Sound
