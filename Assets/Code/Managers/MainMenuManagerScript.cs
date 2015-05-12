@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using System.Net.Mime;
 using System.Timers;
@@ -34,6 +35,7 @@ public class MainMenuManagerScript : MonoBehaviour {
     private GameObject[] _controlSchemeDemoImages;
     private Image _muteSoundEffectsButtonImage;
     private Image _muteMusicButtonImage;
+    private GameObject _socialMenus;
 
     /* Constants */
     private const float CameraShiftTime = 0.2f;
@@ -61,6 +63,7 @@ public class MainMenuManagerScript : MonoBehaviour {
         _controlSchemeDemoImages[3] = GameObject.Find("TapScheme");
         _muteSoundEffectsButtonImage = GameObject.Find("MuteSoundEffectsButton").GetComponent<Image>();
         _muteMusicButtonImage = GameObject.Find("MuteMusicButton").GetComponent<Image>();
+	    _socialMenus = GameObject.Find("SocialMenus");
 
         _shiftStartPosition = new Vector3(GameVariablesScript.ScreenToStartOn * 1080, 0, -10);
 	    _camera.transform.position = _shiftStartPosition;
@@ -70,8 +73,6 @@ public class MainMenuManagerScript : MonoBehaviour {
         BackgroundMusicScript.SetBackgroundMusicMute(GameVariablesScript.MusicMuted);
 
         SetUiFromGameVariables();
-
-        SoomlaProfile.Initialize();
 	}
 	
 	// Update is called once per frame
@@ -132,6 +133,11 @@ public class MainMenuManagerScript : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.Escape))
             Application.Quit();
+
+	    if (Input.GetKeyDown(KeyCode.Return))
+	        SetUserLoggedIn(true);
+        else if (Input.GetKeyDown(KeyCode.Backslash))
+            SetUserLoggedIn(false);
     }
 
     public void StartGame()
@@ -166,14 +172,12 @@ public class MainMenuManagerScript : MonoBehaviour {
 
     #region Menu Controlled Settings
 
-    #region Social NetworkStuff
-
-    public void SocialButtonPress()
+    public void SetUserLoggedIn(bool loggedIn)
     {
-        SoomlaProfile.Login(Provider.FACEBOOK);
-    }
+        var endX = loggedIn ? -Screen.width : 0;
 
-    #endregion
+        StartCoroutine(ShiftSocialMenus(_socialMenus.transform.position.x, endX, 0.2f));
+    }
 
     public void ToggleMuteSounds()
     {
@@ -275,6 +279,19 @@ public class MainMenuManagerScript : MonoBehaviour {
             SetSensitivitySliderEnabled(true);
         else
             SetSensitivitySliderEnabled(false);
+    }
+
+    private IEnumerator ShiftSocialMenus(float startX, float endX, float time)
+    {
+        var timer = 0f;
+        while (timer < time)
+        {
+            timer += Time.deltaTime;
+            _socialMenus.transform.position = Vector3.Lerp(new Vector3(startX, 0, 0), new Vector3(endX, 0, 0), Mathf.SmoothStep(0, 1, timer/time));
+            yield return null;
+        }
+
+        _socialMenus.transform.position = new Vector3(endX, 0, 0);
     }
     #endregion
 }
