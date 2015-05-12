@@ -26,9 +26,6 @@ namespace Assets.Code
             SoomlaProfile.Initialize();
         }
 	
-        // Update is called once per frame
-        void Update () {
-	
-        }
+
     }
 }
