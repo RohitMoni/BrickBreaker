@@ -20,7 +20,7 @@ public class MainMenuManagerScript : MonoBehaviour {
 
     private float _timer;
     private bool _cameraIsShifting;
-    private int _cameraShiftingTo;  // 0 = Start, 1 = Options, 2 = Score screen
+    private Vector3 _shiftEndPosition;  // 0 = Start, 1 = Options, 2 = Score screen, 3 = Social Screen (Either Log in or already logged in)
     private Vector3 _shiftStartPosition;
 
     /* References */
@@ -45,7 +45,7 @@ public class MainMenuManagerScript : MonoBehaviour {
 
 	    _timer = 0;
 	    _cameraIsShifting = false;
-	    _cameraShiftingTo = 0;
+	    _shiftEndPosition = new Vector3(0, 0, -10);
         _shiftStartPosition = new Vector3(0, 0, -10);
 
 	    _camera = Camera.main;
@@ -72,8 +72,6 @@ public class MainMenuManagerScript : MonoBehaviour {
         SetUiFromGameVariables();
 
         SoomlaProfile.Initialize();
-       
-        //SoomlaProfile.Login(Provider.FACEBOOK);
 	}
 	
 	// Update is called once per frame
@@ -87,8 +85,7 @@ public class MainMenuManagerScript : MonoBehaviour {
 	        _timer = Math.Min(_timer, CameraShiftTime);
 
             // shift here
-	        var endPosition = new Vector3( _cameraShiftingTo*Screen.width, 0, -10);
-            _camera.transform.position = Vector3.Lerp(_shiftStartPosition, endPosition, _timer / CameraShiftTime);
+            _camera.transform.position = Vector3.Lerp(_shiftStartPosition, _shiftEndPosition, Mathf.SmoothStep(0f, 1f, _timer / CameraShiftTime));
 
             // Check to see if we stop shifting
 	        if (_timer == CameraShiftTime) // the earlier min function ensures we hit the exact number
@@ -113,7 +110,7 @@ public class MainMenuManagerScript : MonoBehaviour {
         //        }
         //        else
         //        {
-        //            switch (_cameraShiftingTo)
+        //            switch (_shiftEndPosition)
         //            {
         //                case 0:
         //                    if (_camera.transform.position.x >= 100)
@@ -145,7 +142,19 @@ public class MainMenuManagerScript : MonoBehaviour {
     public void ShiftToScreen(int screenNumber)
     {
         _shiftStartPosition = _camera.transform.position;
-        _cameraShiftingTo = screenNumber;
+
+        switch (screenNumber)
+        {
+            case 0:
+            case 1:
+            case 2:
+                _shiftEndPosition = new Vector3( screenNumber*Screen.width, 0, -10);
+                break;
+            case 3:
+                _shiftEndPosition = new Vector3( 0, Screen.height, -10);
+                break;
+        }
+
         _cameraIsShifting = true;
     }
 
@@ -156,6 +165,15 @@ public class MainMenuManagerScript : MonoBehaviour {
     }
 
     #region Menu Controlled Settings
+
+    #region Social NetworkStuff
+
+    public void SocialButtonPress()
+    {
+        SoomlaProfile.Login(Provider.FACEBOOK);
+    }
+
+    #endregion
 
     public void ToggleMuteSounds()
     {
