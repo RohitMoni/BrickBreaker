@@ -254,6 +254,10 @@ public class MainMenuManagerScript : MonoBehaviour {
         // Music  & Sound
         _muteMusicButtonImage.overrideSprite = GameVariablesScript.MusicMuted ? MusicOffImage : MusicOnImage;
         _muteSoundEffectsButtonImage.overrideSprite = GameVariablesScript.SoundEffectsMuted ? SoundEffectsOffImage : SoundEffectsOnImage;
+
+        // Social Network stuff
+        if (SoomlaProfile.IsLoggedIn(Provider.FACEBOOK) || SoomlaProfile.IsLoggedIn(Provider.TWITTER) || SoomlaProfile.IsLoggedIn(Provider.GOOGLE))
+            SetUserLoggedIn(true);
     }
 
     private void SetControlSchemeUiFromGameVariables()
